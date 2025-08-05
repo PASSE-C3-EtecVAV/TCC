@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  {% block title %}
+    Matérias
+  {% endblock %}
+{% endblock %}
+
+{% block conteudo %}
+  {% if materias %}
+    <div class="container-fluid text-center mt-2">
+      <div class="row">
+        {% for materia in materias %}
+          <div class="col mb-2">
+            <form method="get" action="{{ url_for('auth.postagens', turma_id=materia.turma_id, disciplina_id=materia.disciplina_id, nome_disciplina=materia.disciplina_nome) }}">
+              <button class="object-fit-sm-contain btn btn-light border btn-square border border-black" type="submit">
+                <h5>{{ materia.disciplina_nome }}</h5>
+              </button>
+            </form>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  {% else %}
+    <div class="d-flex align-items-center justify-content-center m-2">Nenhuma Matéria Adicionada</div>
+  {% endif %}
+  <div class="text-center">
+    <a class="btn btn-primary" href="{{ url_for('auth.dashboard_aluno') }}">Voltar</a>
+  </div>
+{% endblock %}

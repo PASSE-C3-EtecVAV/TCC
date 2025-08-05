@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  {% block title %}Editar Publicação{% endblock %}
+{% endblock %}
+
+{% block conteudo %}
+  <div class="flex-fill d-flex align-items-center justify-content-center">
+    <div class="text-center border border-black rounded bg-body-tertiary m-1 p-3">
+      <h1>Editar publicação da turma</h1>
+
+      {% if erro %}
+        <p style="color: red;">{{ erro }}</p>
+      {% endif %}
+
+      <form method="POST" enctype="multipart/form-data"
+            action="{{ url_for('auth.editar_postagem', turma_id=turma_id, disciplina_id=disciplina_id, nome_disciplina=nome_disciplina, post_id=postagem.id) }}">
+          
+          <!-- Título -->
+          <label for="titulo">Título da publicação</label>
+          <input class="form-control m-1" type="text" name="titulo" id="titulo" value="{{ postagem.titulo }}" required>
+
+          <!-- Conteúdo -->
+          <label for="conteudo">Conteúdo da publicação:</label>
+          <textarea class="form-control m-1" name="conteudo" id="conteudo" rows="5" required>{{ postagem.conteudo }}</textarea>
+
+          <!-- Arquivo atual -->
+          <label>Arquivo atual:</label>
+          {% if postagem.arquivo %}
+            <p>{{ postagem.arquivo }}</p>
+          {% else %}
+            <p>Nenhum arquivo enviado</p>
+          {% endif %}
+
+          <!-- Novo upload -->
+          <label for="arquivo">Substituir arquivo (opcional):</label>
+          <input class="form-control m-1" type="file" name="arquivo" id="arquivo">
+
+          <button type="button" id="btnSalvarPostagem" class="btn btn-primary m-1">Salvar Alterações</button>
+      </form>
+      <a class="btn btn-secondary m-1" href="{{ url_for('auth.postagens_prof', turma_id=turma_id, disciplina_id=disciplina_id, nome_disciplina=nome_disciplina) }}">Voltar</a>
+    </div>
+  </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const btnSalvar = document.getElementById('btnSalvarPostagem');
+    const form = document.querySelector('form');
+
+    btnSalvar.addEventListener('click', function () {
+        Swal.fire({
+            title: 'Deseja realmente salvar as alterações?',
+            text: "A publicação será atualizada.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sim, salvar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                form.submit();
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  {% block title %}
+    Matérias - {{ turma_nome }}
+  {% endblock %}
+{% endblock %}
+
+{% block conteudo %}
+  <div class="container text-center mt-4">
+    <h2>Matérias da turma: {{ turma_nome }}</h2>
+
+    {% if disciplinas %}
+      <div class="row mt-4">
+        {% for d in disciplinas %}
+          <div class="col-md-4 mb-3">
+            <form method="get" action="{{ url_for('auth.postagens_prof', turma_id=turma_id, disciplina_id=d[0]) }}">
+              <button class="btn btn-outline-dark w-100 py-2">
+                {{ d[1] }}
+              </button>
+            </form>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="alert alert-info mt-4">
+        Você ainda não ministra nenhuma disciplina para essa turma.
+      </div>
+    {% endif %}
+
+    <div class="text-center mt-3">
+      <a class="btn btn-primary" href="{{ url_for('auth.turmas') }}">Voltar</a>
+    </div>
+  </div>
+{% endblock %}

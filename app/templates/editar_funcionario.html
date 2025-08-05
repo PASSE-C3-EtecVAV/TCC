@@ -1,0 +1,140 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  {% block title %}
+    Editar funcionário {{ funcionario.nome }}
+  {% endblock %}
+{% endblock %}
+
+{% block classe %}
+ed_funcionario
+{% endblock %}
+
+{% block conteudo %}
+<div class="flex-fill d-flex flex-column align-items-center justify-content-center">
+    <div class="text-center border border-black rounded bg-body-tertiary m-1 p-3">
+    <h1>Editar as Informações de {{ funcionario.nome }}</h1>
+    {% if erro %}
+        <p style="color: red;">{{ erro }}</p>
+    {% endif %}
+
+    {% if sucesso %}
+        <p style="color: green;">{{ sucesso }}</p>
+    {% endif %}
+
+    <p><strong>Email:</strong> {{ funcionario.email }}</p>
+
+    <form method="POST" action="{{ url_for('auth.editar_funcionario', funcionario_id=funcionario.id) }}">
+        <div class="form-floating m-2">
+            <input class="form-control" type="text" name="nome" id="nome" value="{{ funcionario.nome }}" placeholder="Nome" required>
+            <label class="form-label" for="nome">Nome</label>
+        </div>
+        {% if funcionario.id == session['usuario_id'] %}
+            <div class="m-2">
+                <h3>Alterar Senha</h3>
+                <form method="POST" action="{{ url_for('auth.editar_funcionario', funcionario_id=funcionario.id) }}">
+                    <div class="form-floating m-1 position-relative">
+                        <input class="form-control m-1" type="password" name="nova_senha" id="nova_senha" placeholder="Nova Senha" required>
+                        <label class="form-label" for="nova_senha">Nova Senha</label>
+                        <button type="button" class="btn btn-sm btn-outline-secondary position-absolute top-50 end-0 translate-middle-y me-2" onclick="toggleSenha()">
+                            Mostrar
+                        </button>
+                    </div>
+                    <input class="form-control" type="hidden" name="acao" value="trocar_senha">
+                    <button class="btn btn-primary m-1" type="submit">Salvar Nova Senha</button>
+                </form>
+            </div>
+        {% endif %}
+
+
+        {% if session['usuario_tipo'] == 'professor' %}
+        {% else %}
+        <div class="m-2">
+            <select class="form-select" name="tipo" id="tipo" required>
+                <option value="">Cargo</option>
+                <option value="professor" {% if funcionario.tipo == 'professor' %}selected{% endif %}>Professor</option>
+                <option value="coordenacao" {% if funcionario.tipo == 'coordenacao' %}selected{% endif %}>Coordenação</option>
+                <option value="prof_coorde" {% if funcionario.tipo == 'prof_coorde' %}selected{% endif %}>Professor/Coordenação</option>
+            </select>
+        </div>
+        {% endif %}
+        <!-- SE prof_coorde -->
+         {% if session['usuario_tipo'] == 'professor' %}
+            <div class="mb-2">
+                <button type="button" class="btn btn-danger" onclick="Swal.fire({
+                    icon: 'warning',
+                    title: 'Acesso negado',
+                    text: 'Você não pode alterar suas próprias matérias ou seu cargo. Peça a um coordenador responsável.',
+                    confirmButtonText: 'Entendido'
+                })">
+                    Você não pode editar suas próprias matérias ou seu cargo.
+                </button>
+            </div>
+         {% else %}
+                {% if funcionario.tipo == "prof_coorde" or funcionario.tipo == "professor" %}
+                    <div class="mb-2">
+                        <a class="btn btn-secondary" href="{{ url_for('auth.vincular_prof_disciplinas', funcionario_id=funcionario.id) }}">
+                            Gerenciar Disciplinas e Turmas
+                        </a>
+                    </div>
+                {% endif %}
+        {% endif %}
+        <div class="d-flex flex-column align-items-center justify-content-center">
+        {% if funcionario.id == session['usuario_id'] %}
+        {% else %}
+        <button class="btn btn-primary m-2" type="submit" name="acao" value="redefinir">Redefinir Senha</button>
+        {% endif %}
+        <button class="btn btn-primary m-1" type="submit" name="acao" value="salvar">Salvar Alterações</button>
+        </div>
+    </form>
+    {% if funcionario.id != session['usuario_id'] %}
+        <button class="btn btn-danger m-2" onclick="confirmarExclusaoFuncionario({{ funcionario.id }})">
+            Excluir Funcionário
+        </button>
+    {% endif %}
+
+    <a class="btn btn-primary m-1" href="
+    {% if session['usuario_tipo'] == 'professor' %}
+        {{ url_for('auth.dashboard_professor') }}
+    {% else %}
+        {% if next_page %}
+                {{ url_for('auth.' + next_page) }}
+            {% else %}
+                {{ url_for('auth.gerenciar_funcionarios') }}
+            {% endif %}
+    {% endif %}">Voltar</a>
+</div></div>
+<script>
+    function confirmarExclusaoFuncionario(funcionarioId) {
+        Swal.fire({
+            title: 'Tem certeza?',
+            text: 'Essa ação removerá completamente o funcionário do sistema!',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Sim, excluir',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = `/excluir_funcionario/${funcionarioId}`;
+                document.body.appendChild(form);
+                form.submit();
+            }
+        });
+    }
+
+    function toggleSenha() {
+        const input = document.getElementById('nova_senha');
+        input.type = input.type === 'password' ? 'text' : 'password';
+    }
+</script>
+    {% endblock %}
+
+    <footer class="mt-auto border-top bg-body-tertiary">
+      <p class="text-center m-3">&copy; 2025 Teams 2. Todos os direitos reservados.</p>
+    </footer>
+  </body>
+</html>

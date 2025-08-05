@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  {% block title %}
+    Editar {{ aluno.nome }}
+  {% endblock %}
+{% endblock %}
+
+{% block classe %}
+aluno
+{% endblock %}
+
+{% block conteudo %}
+<div class="flex-fill d-flex align-items-center justify-content-center">
+    <div class="text-center border border-black rounded bg-body-tertiary m-1 p-3">
+        <h1>Editar as Informações de {{ aluno.nome }}</h1>
+        {% if erro %}
+            <p style="color: red;">{{ erro }}</p>
+        {% endif %}
+
+        {% if sucesso %}
+            <p style="color: green;">{{ sucesso }}</p>
+        {% endif %}
+
+        <p><strong>Email:</strong> {{ aluno.email }}</p>
+
+        <form method="POST" action="{{ url_for('auth.editar_aluno', aluno_id=aluno.id) }}">
+            <div class="form-floating m-2">
+                <input class="form-control" type="text" name="nome" id="nome" value="{{ aluno.nome }}" placeholder="Nome" required>
+                <label for="nome">Nome</label>
+            </div>
+            <div class="m-2">
+                <select class="form-select" name="turma_id" id="turma_id" required>
+                    <option value="">Turma</option>
+                    {% for turma in turmas %}
+                        <option value="{{ turma[0] }}" {% if turma[0] == turma_id %}selected{% endif %}>
+                            {{ turma[1] }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <button class="btn btn-primary m-1" type="submit" name="acao" value="redefinir">Redefinir Senha</button><br>
+            <button class="btn btn-primary m-1" type="submit" name="acao" value="salvar">Salvar Alterações</button><br>
+        </form>
+        <form id="form-excluir-aluno" method="POST" action="{{ url_for('auth.excluir_aluno', aluno_id=aluno.id) }}">
+        <button type="button" class="btn btn-danger m-1" onclick="confirmarExclusao()">Excluir Aluno</button>
+    </form>
+
+        <a class="btn btn-primary m-1" href="{{ url_for('auth.ver_turma', turma_id=turma_id) }}">Voltar</a>
+    </div>
+</div>
+<script>
+    function confirmarExclusao() {
+        Swal.fire({
+            title: 'Tem certeza?',
+            text: "Essa ação excluirá o aluno permanentemente.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Sim, excluir!',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById('form-excluir-aluno').submit();
+            }
+        });
+    }
+</script>
+    {% endblock %}

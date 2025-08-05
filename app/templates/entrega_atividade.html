@@ -1,0 +1,190 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  {% block title %}Turma{% endblock %}
+{% endblock %}
+
+{% block botaonav %}
+  <button class="btn btn-outline-dark d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarOffcanvas">☰</button>
+{% endblock %}
+
+{% block conteudo %}
+  <!-- Sidebar telas pequenas -->
+  <div class="offcanvas offcanvas-start d-md-none" tabindex="-1" id="sidebarOffcanvas">
+    <div class="offcanvas-header">
+      <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+    </div>
+    <div class="offcanvas-body">
+      <h5 class="border border-black d-flex justify-content-center align-items-center text-center square bg-white mb-3">{{ nome_disciplina }}</h5>
+      <ul class="nav flex-column">
+        <li class="nav-item border-bottom border-black m-1">
+          <form method="get" action="{{ url_for('auth.postagens', turma_id=turma_id, disciplina_id=disciplina_id, nome_disciplina=nome_disciplina) }}">
+            <button class="btn w-100 text-start rounded-0 p-1 link" type="submit">Postagens</button>
+          </form>
+        </li>
+        <li class="nav-item border-bottom border-black m-1">
+          <form method="get" action="{{ url_for('auth.atividades', turma_id=turma_id, disciplina_id=disciplina_id, nome_disciplina=nome_disciplina) }}">
+            <button class="btn w-100 text-start rounded-0 p-1 link">Atividades</button>
+          </form>
+        </li>
+        <li class="nav-item border-bottom border-black m-1">
+          <form method="get" action="{{ url_for('auth.arquivos', turma_id=turma_id, disciplina_id=disciplina_id, nome_disciplina=nome_disciplina) }}">
+            <button class="btn w-100 text-start rounded-0 p-1 link">Arquivos</button>
+          </form>
+        </li>
+        <li class="nav-item border-bottom border-black m-1">
+          <form method="get" action="{{ url_for('auth.materias') }}">
+            <button class="btn w-100 text-start rounded-0 p-1 link">Voltar</button>
+          </form>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Sidebar telas médias e maiores -->
+  <div class="d-none d-md-block bg-light position-fixed start-0 top-0 pt-5 h-100 border-end border-black z-0" style="width: 250px;">
+    <div class="p-3">
+      <h5 class="border border-black d-flex justify-content-center align-items-center text-center square bg-white mb-3">{{ nome_disciplina }}</h5>
+      <ul class="nav flex-column">
+        <li class="nav-item border-bottom border-black m-1">
+          <form method="get" action="{{ url_for('auth.postagens', turma_id=turma_id, disciplina_id=disciplina_id, nome_disciplina=nome_disciplina) }}">
+            <button class="btn w-100 text-start rounded-0 p-1 link">Postagens</button>
+          </form>
+        </li>
+        <li class="nav-item border-bottom border-black m-1">
+          <form method="get" action="{{ url_for('auth.atividades', turma_id=turma_id, disciplina_id=disciplina_id, nome_disciplina=nome_disciplina) }}">
+            <button class="btn w-100 text-start rounded-0 p-1 link">Atividades</button>
+          </form>
+        </li>
+        <li class="nav-item border-bottom border-black m-1">
+          <form method="get" action="{{ url_for('auth.arquivos', turma_id=turma_id, disciplina_id=disciplina_id, nome_disciplina=nome_disciplina) }}">
+            <button class="btn w-100 text-start rounded-0 p-1 link">Arquivos</button>
+          </form>
+        </li>
+        <li class="nav-item border-bottom border-black m-1">
+          <form method="get" action="{{ url_for('auth.materias') }}">
+            <button class="btn w-100 text-start rounded-0 p-1 link">Voltar às matérias</button>
+          </form>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Conteúdo principal -->
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col" id="conteudo">
+        <div class="container mt-4">
+          <h2 class="text-center">{{ atividade.titulo }}</h2>
+          <p>{{ atividade.descricao }}</p>
+          <p>
+            <strong>Prazo para atraso:</strong> {{ atividade.data_atraso.strftime('%d/%m/%Y %H:%M') }}<br>
+            <strong>Encerramento:</strong> {{ atividade.data_encerramento.strftime('%d/%m/%Y %H:%M') }}
+          </p>
+
+          {% if atividade.arquivo %}
+            <div class="mb-3">
+              <a href="{{ url_for('static', filename='uploads/' + atividade.arquivo) }}" class="btn btn-primary" download>
+                Baixar Arquivo da Atividade
+              </a>
+            </div>
+          {% endif %}
+
+          <form method="POST" 
+                action="{{ url_for('auth.entrega_atividade', turma_id=turma_id, disciplina_id=disciplina_id, nome_disciplina=nome_disciplina, atividade_id=atividade.id) }}" 
+                enctype="multipart/form-data" id="formEntrega">
+            <div class="mb-3">
+              <label for="texto" class="form-label">Resposta (opcional):</label>
+              <textarea name="texto" id="texto" class="form-control" rows="4" {% if entrega or atividade_fechada %}disabled{% endif %}>{{ entrega.texto if entrega else cache_texto }}</textarea>
+            </div>
+
+            <div class="mb-3">
+              <label for="arquivo" class="form-label">Arquivo de Resposta (opcional):</label>
+              <input type="file" name="arquivo" id="arquivo" class="form-control" {% if entrega or atividade_fechada %}disabled{% endif %}>
+            </div>
+
+            {% if entrega %}
+              {% if not atividade_fechada %}
+                <button type="button" id="btnDesfazer" class="btn btn-warning">Desfazer Entrega</button>
+              {% endif %}
+            {% else %}
+              {% if not atividade_fechada %}
+                <button type="button" id="btnEntregar" class="btn btn-success">
+                  {% if com_atraso %}
+                    Entregar com Atraso
+                  {% else %}
+                    Entregar Atividade
+                  {% endif %}
+                </button>
+              {% endif %}
+            {% endif %}
+          </form>
+
+          {% if atividade_fechada %}
+            <div class="alert alert-danger mt-3">
+              Esta atividade está encerrada. Você não pode mais enviar ou alterar entregas.
+            </div>
+          {% elif not entrega %}
+            <div class="alert alert-warning mt-3">
+              Você pode entregar a atividade em branco (sem texto nem arquivo).
+            </div>
+          {% endif %}
+
+          {% if entrega and entrega.anotacao %}
+            <div class="alert alert-info mt-3">
+              <strong>Anotação do professor:</strong><br>
+              {{ entrega.anotacao }}
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const form = document.getElementById('formEntrega');
+
+    const btnEntregar = document.getElementById('btnEntregar');
+    if (btnEntregar) {
+      btnEntregar.addEventListener('click', function () {
+        Swal.fire({
+          title: 'Tem certeza?',
+          text: 'Tem certeza que deseja entregar essa atividade?',
+          icon: 'question',
+          showCancelButton: true,
+          confirmButtonText: 'Sim, entregar',
+          cancelButtonText: 'Cancelar'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            form.submit();
+          }
+        });
+      });
+    }
+
+    const btnDesfazer = document.getElementById('btnDesfazer');
+    if (btnDesfazer) {
+      btnDesfazer.addEventListener('click', function () {
+        Swal.fire({
+          title: 'Deseja continuar?',
+          text: 'Ao desfazer essa entrega, você terá que entregar novamente e não poderá mais baixar o seu arquivo enviado, se tiver algum.',
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonText: 'Sim, desfazer',
+          cancelButtonText: 'Cancelar'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'desfazer';
+            input.value = '1';
+            form.appendChild(input);
+            form.submit();
+          }
+        });
+      });
+    }
+  });
+  </script>
+{% endblock %}

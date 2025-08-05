@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  {% block title %}Todas as atividades{% endblock %}
+{% endblock %}
+
+{% block botaonav %}
+  <button class="btn btn-outline-dark d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarOffcanvas">☰</button>
+{% endblock %}
+
+{% block conteudo %}
+<div class="container-fluid">
+  <div class="row">
+    <div class="col">
+      <h2 class="text-center m-2">Atividades</h2>
+
+      <div class="card-group">
+
+        <!-- Atividades Disponíveis -->
+        <div class="card border-black">
+          <h4 class="card-title text-center border-bottom border-black pb-2 mt-2 mb-2">Atividades Disponíveis</h4>
+          {% if disponiveis %}
+            {% for atividade in disponiveis %}
+              <a href="{{ url_for('auth.entrega_atividade', turma_id=turma_id, disciplina_id=atividade.disciplina_id, nome_disciplina=atividade.disciplina_nome, atividade_id=atividade.id) }}" class="btn link text-start rounded-0 w-100 text-truncate border-bottom" style="overflow: hidden;">
+                <div class="card-body rounded-0">
+                  <h5 class="card-title mb-1">{{ atividade.titulo }} - <small>{{ atividade.disciplina_nome }}</small></h5>
+                  <p class="card-text mb-1 text-truncate" style="width: 100%; max-width: 468px; white-space: nowrap;">
+                    {{ atividade.descricao }}
+                  </p>
+                  <p class="card-text pb-2 mb-0">
+                    <small class="text-body-secondary">
+                      Data da publicação: {{ atividade.data_criacao.strftime('%d/%m/%Y %H:%M') }}<br />
+                      Data limite: {{ atividade.data_encerramento.strftime('%d/%m/%Y %H:%M') }}
+                    </small>
+                  </p>
+                </div>
+              </a>
+            {% endfor %}
+          {% else %}
+            <p class="text-center mt-2">Nenhuma atividade disponível.</p>
+          {% endif %}
+        </div>
+
+        <!-- Atividades Atrasadas -->
+        <div class="card border-black">
+          <h4 class="card-title text-center border-bottom border-black pb-2 mt-2 mb-2">Atividades Atrasadas</h4>
+          {% if atrasadas %}
+            {% for atividade in atrasadas %}
+              <a href="{{ url_for('auth.entrega_atividade', turma_id=turma_id, disciplina_id=atividade.disciplina_id, nome_disciplina=atividade.disciplina_nome, atividade_id=atividade.id) }}" class="btn link text-start rounded-0 w-100 text-truncate border-bottom" style="overflow: hidden;">
+                <div class="card-body rounded-0">
+                  <h5 class="card-title mb-1">{{ atividade.titulo }} - <small>{{ atividade.disciplina_nome }}</small></h5>
+                  <p class="card-text mb-1 text-truncate" style="width: 100%; max-width: 468px; white-space: nowrap;">
+                    {{ atividade.descricao }}
+                  </p>
+                  <p class="card-text pb-2 mb-0">
+                    <small class="text-body-secondary">
+                      Data da publicação: {{ atividade.data_criacao.strftime('%d/%m/%Y %H:%M') }}<br />
+                      Data limite: {{ atividade.data_encerramento.strftime('%d/%m/%Y %H:%M') }}
+                    </small>
+                  </p>
+                </div>
+              </a>
+            {% endfor %}
+          {% else %}
+            <p class="text-center mt-2">Nenhuma atividade atrasada.</p>
+          {% endif %}
+        </div>
+
+        <!-- Atividades Concluídas -->
+        <div class="card border-black">
+          <h4 class="card-title text-center border-bottom border-black pb-2 mt-2 mb-2">Atividades Concluídas</h4>
+          {% if concluidas %}
+            {% for atividade in concluidas %}
+              <a href="{{ url_for('auth.entrega_atividade', turma_id=turma_id, disciplina_id=atividade.disciplina_id, nome_disciplina=atividade.disciplina_nome, atividade_id=atividade.id) }}" class="btn link text-start rounded-0 w-100 text-truncate border-bottom" style="overflow: hidden;">
+                <div class="card-body rounded-0">
+                  <h5 class="card-title mb-1">{{ atividade.titulo }} - <small>{{ atividade.disciplina_nome }}</small></h5>
+                  <p class="card-text mb-1 text-truncate" style="width: 100%; max-width: 468px; white-space: nowrap;">
+                    {{ atividade.descricao }}
+                  </p>
+                  <p class="card-text pb-2 mb-0">
+                    <small class="text-body-secondary">
+                      Data da publicação: {{ atividade.data_criacao.strftime('%d/%m/%Y %H:%M') }}<br />
+                      Data limite: {{ atividade.data_encerramento.strftime('%d/%m/%Y %H:%M') }}
+                    </small>
+                  </p>
+                </div>
+              </a>
+            {% endfor %}
+          {% else %}
+            <p class="text-center mt-2">Nenhuma atividade concluída.</p>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="d-flex align-items-center justify-content-center">
+        <a href="{{ url_for('auth.dashboard_aluno') }}" class="btn btn-primary d-flex justify-content-center align-items-center text-center m-2">Voltar</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

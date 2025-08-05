@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  {% block title %}
+    Área do Aluno
+  {% endblock %}
+{% endblock %}
+
+{% block classe %}
+  aluno
+{% endblock %}
+
+{% block conteudo %}
+  <div class="flex-fill d-flex flex-column justify-content-center p-2 border-end sidebar col-12 col-md-3">
+    <div class="d-flex flex-column">
+      <div class="mb-5 border-bottom">
+        <h4>Área do Aluno(a)</h4>
+      </div>
+
+      <div class="m-1 link">
+        <a class="no-underline d-block border-bottom p-1" href="{{ url_for('auth.materias') }}">Matérias</a>
+      </div>
+
+      <div class="m-1 link">
+        <a class="no-underline d-block border-bottom p-1" href="{{ url_for('auth.redirecionar_todas_atividades') }}">Todas as Tarefas</a>
+      </div>
+
+      <div class="m-1 link">
+        <a class="no-underline d-block border-bottom p-1" href="{{ url_for('auth.logout') }}">Sair</a>
+      </div>
+    </div>
+  </div>
+{% endblock %}

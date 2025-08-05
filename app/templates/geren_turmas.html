@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  {% block title %}
+    Gerenciar Turmas
+  {% endblock %}
+{% endblock %}
+
+{% block classe %}
+
+{% endblock %}
+
+{% block conteudo %}
+  {% if turmas %}
+    <div class="container-fluid text-center mt-2">
+      <div class="row">
+        {% for turma in turmas %}
+          <div class="col mb-2">
+            <form method="get" action="{{ url_for('auth.ver_turma', turma_id=turma.0) }}">
+                <button class="object-fit-sm-contain btn btn-light border btn-square border border-black" type="submit"><h5>{{ turma.1 }}</h5></button>
+            </form>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  {% else %}
+    <div class="d-flex align-items-center justify-content-center m-2">Nenhuma Turma Adicionada</div>
+  {% endif %}
+  <br>
+  <div class="text-center">
+    <a class="btn btn-primary" href="{{ url_for('auth.adicionar_turma') }}">Adicionar Turma</a>
+    <a class="btn btn-primary" href="{{ url_for('auth.dashboard_coordenacao') }}">Voltar</a>
+  </div>
+{% endblock %}

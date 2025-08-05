@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  {% block title %}Adicionar Atividade{% endblock %}
+{% endblock %}
+
+{% block conteudo %}
+  <div class="flex-fill d-flex align-items-center justify-content-center">
+    <div class="text-center border border-black rounded bg-body-tertiary m-1 p-3">
+      <h1>Nova atividade para a turma.</h1>
+
+      {% if erro %}
+        <p style="color: red;">{{ erro }}</p>
+      {% endif %}
+
+      <form method="POST" enctype="multipart/form-data" action="{{ url_for('auth.adicionar_atividade', turma_id=turma_id, disciplina_id=disciplina_id, nome_disciplina=nome_disciplina) }}">
+        <label for="titulo">Título da atividade</label>
+        <input class="form-control m-1" type="text" name="titulo" id="titulo" required />
+
+        <label for="descricao">Descrição:</label>
+        <textarea class="form-control m-1" name="descricao" id="descricao" rows="5" required></textarea>
+
+        <label for="data_atraso">Data para considerar atraso:</label>
+        <input class="form-control m-1" type="datetime-local" name="data_atraso" id="data_atraso" required />
+
+        <label for="data_encerramento">Data limite de envio (encerramento):</label>
+        <input class="form-control m-1" type="datetime-local" name="data_encerramento" id="data_encerramento" required />
+
+        <label for="arquivo">Anexar arquivo (opcional):</label>
+        <input class="form-control m-1" type="file" name="arquivo" id="arquivo" />
+
+        <button class="btn btn-primary m-1" type="submit">Publicar</button>
+      </form>
+
+      <a class="btn btn-secondary m-1" href="{{ url_for('auth.atividade_prof', turma_id=turma_id, disciplina_id=disciplina_id, nome_disciplina=nome_disciplina) }}">Voltar</a>
+    </div>
+  </div>
+{% endblock %}

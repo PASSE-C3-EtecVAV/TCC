@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  {% block title %}
+    Gerenciar Funcionários
+  {% endblock %}
+{% endblock %}
+
+{% block conteudo %}
+  <div class="d-flex p-2">
+    {% if funcionarios %}
+      <div class="table-responsive w-100">
+        <table class="table table-hover table-bordered">
+          <thead class="text-center">
+            <tr>
+              <th>Nome</th>
+              <th>Email</th>
+              <th>Cargo</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for func in funcionarios %}
+              <tr>
+                <td>{{ func.1 }}</td>
+                <td>{{ func.2 }}</td>
+                <td class="text-center">
+                  {% if func.3 == 'prof_coorde' %}
+                    P/C
+                  {% elif func.3 == 'professor' %}
+                    Professor
+                  {% elif func.3 == 'coordenacao' %}
+                    Coordenação
+                  {% else %}
+                    {{ func.3 }}
+                  {% endif %}
+                </td>
+                <td class="text-center">
+                  <a href="{{ url_for('auth.editar_funcionario', funcionario_id=func.0) }}">Editar</a>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <p>Nenhum funcionário encontrado.</p>
+    {% endif %}
+  </div>
+  <div class="text-center">
+    <a class="btn btn-primary m-1" href="{{ url_for('auth.adicionar_funcionario') }}">Adicionar Funcionário</a><br>
+    <a class="btn btn-primary m-1" href="{{ url_for('auth.dashboard_coordenacao') }}">Voltar</a>
+  </div>
+{% endblock %}

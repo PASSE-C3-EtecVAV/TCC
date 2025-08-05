@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  {% block title %}
+    Vincular {{ funcionario.nome }}
+  {% endblock %}
+{% endblock %}
+
+{% block conteudo %}
+<div class="container mt-4">
+    <h2>Vincular {{ funcionario.nome }} a Turmas e suas Disciplinas</h2>
+
+    <form method="POST" action="{{ url_for('auth.vincular_prof_disciplinas', funcionario_id=funcionario.id) }}">
+        <!-- Turma -->
+        <div class="form-floating mb-3">
+            <select class="form-select" name="turma_id" id="turma_id" required>
+                <option value="">Selecione uma turma</option>
+                {% for turma in turmas %}
+                    <option value="{{ turma[0] }}">{{ turma[1] }}</option>
+                {% endfor %}
+            </select>
+            <label for="turma_id">Turma</label>
+        </div>
+
+        <!-- Disciplinas (preenchido via JS) -->
+        <div class="form-floating mb-3" id="disciplinas_container" style="display: none;">
+            <select class="form-select" name="disciplina_id" id="disciplina_id" required>
+                <!-- opções carregadas via fetch -->
+            </select>
+            <label for="disciplina_id">Disciplina</label>
+        </div>
+        <input type="hidden" name="acao" value="adicionar">
+        <button type="submit" class="btn btn-success">Vincular</button>
+    </form>
+    <br>
+    <h3>Vínculos Atuais</h3>
+        {% if vinculos %}
+            <h3 class="mt-4">Disciplinas já atribuídas</h3>
+            <table class="table table-bordered mt-2">
+                <thead>
+                    <tr>
+                        <th>Turma</th>
+                        <th>Disciplina</th>
+                        <th>Ação</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for v in vinculos %}
+                    <tr>
+                        <td>{{ v[0] }}</td>  <!-- turma_nome -->
+                        <td>{{ v[1] }}</td>  <!-- disciplina_nome -->
+                        <td>
+                            <form id="remover-vinculo-{{ v[2] }}-{{ v[3] }}" method="POST" action="{{ url_for('auth.vincular_prof_disciplinas', funcionario_id=funcionario.id) }}">
+                                <input type="hidden" name="acao" value="remover">
+                                <input type="hidden" name="turma_id" value="{{ v[2] }}">       <!-- turma_id -->
+                                <input type="hidden" name="disciplina_id" value="{{ v[3] }}"> <!-- disciplina_id -->
+                                <button type="button" class="btn btn-danger btn-sm" onclick="confirmarRemocao('{{ v[2] }}', '{{ v[3] }}')">Remover</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>Nenhum vínculo registrado.</p>
+        {% endif %}
+    </div>
+
+    <div class="container mt-4">
+        <a href="{{ url_for('auth.editar_funcionario', funcionario_id=funcionario.id) }}" class="btn btn-secondary mt-3">Voltar</a>
+    </div>
+
+<script>
+    // Função para carregar disciplinas dinamicamente
+    document.getElementById('turma_id').addEventListener('change', function () {
+        const turmaId = this.value;
+        const disciplinaSelect = document.getElementById('disciplina_id');
+        const container = document.getElementById('disciplinas_container');
+
+        disciplinaSelect.innerHTML = ''; // limpa opções
+
+        if (turmaId) {
+            fetch(`/api/disciplinas_da_turma/${turmaId}`)
+                .then(response => response.json())
+                .then(disciplinas => {
+                    if (disciplinas.length > 0) {
+                        container.style.display = 'block';
+                        disciplinas.forEach(d => {
+                            const opt = document.createElement('option');
+                            opt.value = d.id;
+                            opt.textContent = d.nome;
+                            disciplinaSelect.appendChild(opt);
+                        });
+                    } else {
+                        container.style.display = 'none';
+                        Swal.fire({
+                            icon: 'info',
+                            title: 'Sem disciplinas',
+                            text: 'Essa turma não possui disciplinas cadastradas.'
+                        });
+                    }
+                });
+        } else {
+            container.style.display = 'none';
+        }
+    });
+
+    // Função para confirmar remoção de vínculo
+    function confirmarRemocao(turmaId, disciplinaId) {
+        Swal.fire({
+            title: 'Tem certeza?',
+            text: 'Deseja remover esse vínculo? Essa ação não pode ser desfeita.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Sim, remover',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById(`remover-vinculo-${turmaId}-${disciplinaId}`).submit();
+            }
+        });
+    }
+</script>
+
+{% endblock %}

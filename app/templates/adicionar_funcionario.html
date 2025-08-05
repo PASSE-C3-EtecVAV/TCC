@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  {% block title %}
+    Adicionar Fucnaionário
+  {% endblock %}
+{% endblock %}
+
+{% block classe %}
+  ed_funcionario
+{% endblock %}
+
+{% block conteudo %}
+  <div class="flex-fill d-flex align-items-center justify-content-center">
+    <div class="text-center border border-black rounded bg-body-tertiary m-1 p-3">
+      <h1>Adicionar Funcionário</h1>
+
+      {% if erro %}
+        <p style="color: red;">{{ erro }}</p>
+      {% endif %}
+
+      <p>
+        <strong>A senha padrão será:</strong> <code>funcionario123</code>
+      </p>
+
+      <form method="POST" action="{{ url_for('auth.adicionar_funcionario') }}">
+        <div class="form-floating m-1">
+          <input class="form-control" type="text" name="nome" id="nome" placeholder="Nome" required />
+          <label class="form-label" for="nome">Nome</label>
+        </div>
+        <div class="form-floating m-1">
+          <input class="form-control" type="email" name="email" id="email" placeholder="E-mail" required />
+          <label class="form-label" for="email">E-mail</label>
+        </div>
+        <div class="m-1">
+          <select class="form-select" name="tipo" id="tipo" required>
+          <option value="">Cargo</option>
+          <option value="professor">Professor</option>
+          <option value="coordenacao">Coordenação</option>
+          <option value="prof_coorde">Professor/Coordenação</option>
+        </select>
+        </div>
+
+        <button class="btn btn-primary m-1" type="submit">Adicionar</button>
+      </form>
+      <a class="btn btn-primary m-1" href="{{ url_for('auth.gerenciar_funcionarios') }}">Voltar</a>
+    </div>
+  </div>
+{% endblock %}

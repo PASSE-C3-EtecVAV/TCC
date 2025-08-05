@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  {% block title %}
+    Turma
+  {% endblock %}
+{% endblock %}
+
+{% block botaonav %}
+  <button class="btn btn-outline-dark d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarOffcanvas">☰</button>
+{% endblock %}
+
+{% block conteudo %}
+  <!-- Sidebar telas pequenas -->
+  <div class="offcanvas offcanvas-start d-md-none" tabindex="-1" id="sidebarOffcanvas">
+    <div class="offcanvas-header">
+      <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+    </div>
+    <div class="offcanvas-body">
+      <h5 class="border border-black d-flex justify-content-center align-items-center text-center square bg-white mb-3">{{ nome_disciplina }}</h5>
+      <ul class="nav flex-column">
+        <li class="nav-item border-bottom border-black m-1">
+          <form method="get" action="{{ url_for('auth.postagens', turma_id=turma_id, disciplina_id=disciplina_id, nome_disciplina=nome_disciplina) }}">
+            <button class="btn w-100 text-start rounded-0 p-1 link" type="submit">Postagens</button>
+          </form>
+        </li>
+        <li class="nav-item border-bottom border-black m-1">
+          <form method="get" action="{{ url_for('auth.atividades', turma_id=turma_id, disciplina_id=disciplina_id, nome_disciplina=nome_disciplina) }}">
+            <button class="btn w-100 text-start rounded-0 p-1 link">Atividades</button>
+          </form>
+        </li>
+        <li class="nav-item border-bottom border-black m-1">
+          <form method="get" action="{{ url_for('auth.arquivos', turma_id=turma_id, disciplina_id=disciplina_id, nome_disciplina=nome_disciplina) }}">
+            <button class="btn w-100 text-start rounded-0 p-1 link">Arquivos</button>
+          </form>
+        </li>
+        <li class="nav-item border-bottom border-black m-1">
+          <form method="get" action="{{ url_for('auth.materias') }}">
+            <button class="btn w-100 text-start rounded-0 p-1 link" class="btn-voltar">Voltar</button>
+          </form>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Sidebar telas médias e maiores -->
+  <div class="d-none d-md-block bg-light position-fixed start-0 top-0 pt-5 h-100 border-end border-black z-0" style="width: 250px;">
+    <div class="p-3">
+      <h5 class="border border-black d-flex justify-content-center align-items-center text-center square bg-white mb-3">{{ nome_disciplina }}</h5>
+      <ul class="nav flex-column">
+        <li class="nav-item border-bottom border-black m-1">
+          <form method="get" action="{{ url_for('auth.postagens', turma_id=turma_id,disciplina_id=disciplina_id, nome_disciplina=nome_disciplina) }}">
+            <button class="btn w-100 text-start rounded-0 p-1 link">Postagens</button>
+          </form>
+        </li>
+        <li class="nav-item border-bottom border-black m-1">
+          <form method="get" action="{{ url_for('auth.atividades', turma_id=turma_id, disciplina_id=disciplina_id, nome_disciplina=nome_disciplina) }}">
+            <button class="btn w-100 text-start rounded-0 p-1 link">Atividades</button>
+          </form>
+        </li>
+        <li class="nav-item border-bottom border-black m-1">
+          <form method="get" action="{{ url_for('auth.arquivos', turma_id=turma_id, disciplina_id=disciplina_id, nome_disciplina=nome_disciplina) }}">
+            <button class="btn w-100 text-start rounded-0 p-1 link">Arquivos</button>
+          </form>
+        </li>
+        <li class="nav-item border-bottom border-black m-1">
+          <form method="get" action="{{ url_for('auth.materias') }}">
+            <button class="btn w-100 text-start rounded-0 p-1 link">Voltar às matérias</button>
+          </form>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+<!-- Conteúdo principal -->
+<div class="container-fluid">
+  <div class="row">
+    <div class="col" id="conteudo">
+      <h2 class="text-center m-2">Atividades</h2>
+
+      {% if atividades %}
+        {% for atividade in atividades %}
+          <div class="card mb-3">
+            <div class="card-body">
+              <h5 class="card-title text-center">{{ atividade.titulo }}</h5>
+              <p class="card-text">{{ atividade.descricao }}</p>
+              <p class="card-text pb-2 mb-0">
+                <small class="text-body-secondary">
+                  Data para considerar atraso: {{ atividade.data_atraso.strftime('%d/%m/%Y %H:%M') }}<br>
+                  Data limite: {{ atividade.data_encerramento.strftime('%d/%m/%Y %H:%M') }}
+                </small>
+              </p>
+
+              <div class="text-center mt-2">
+                    {% if atividade.arquivo %}
+                      <div class="text-center mt-3">
+                        <a href="{{ url_for('static', filename='uploads/' + atividade.arquivo) }}" 
+                          class="btn btn-outline-primary m-1" download>
+                          Baixar Arquivo
+                        </a>
+                      </div>
+                    {% endif %}
+                    
+                    <a href="{{ url_for('auth.entrega_atividade', atividade_id=atividade.id, turma_id=turma_id, disciplina_id=disciplina_id, nome_disciplina=nome_disciplina) }}" class="btn btn-success">
+                      Ver Atividade
+                    </a>
+                  </div>
+
+
+              
+            </div>
+          </div>
+        {% endfor %}
+      {% else %}
+        <p class="text-center">Nenhuma atividade encontrada para esta matéria.</p>
+      {% endif %}
+
+
+      <div class="d-flex align-items-center justify-content-center">
+        <a href="{{ url_for('auth.materias') }}" class="btn btn-secondary m-2">Voltar</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,153 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  {% block title %}
+    Editar Turma {{ nome_turma }}
+  {% endblock %}
+{% endblock %}
+
+{% block conteudo %}
+  <div class="d-flex flex-column p-2">
+    <h1 class="text-center">Turma {{ nome_turma }}</h1>
+    {% if alunos %}
+      <div class="table-responsive w-100">
+        <table class="table table-hover table-bordered">
+          <thead class="text-center">
+            <tr>
+              <th>Nome</th>
+              <th>Email</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for aluno in alunos %}
+              <tr>
+                <td>{{ aluno.1 }}</td>
+                <td>{{ aluno.2 }}</td>
+                <td class="text-center">
+                  <a href="{{ url_for('auth.editar_aluno', aluno_id=aluno.0) }}">Editar</a>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <p>Nenhum aluno nesta turma.</p>
+    {% endif %}
+  </div>
+  <div class="text-center">
+    <a class="btn btn-primary m-1" href="{{ url_for('auth.adicionar_aluno', turma_id=turma_id) }}">Adicionar Aluno</a><br />
+    <br>      
+      {% if alunos %}
+          <div class="d-flex flex-column">
+            <h3>Transferir todos os alunos para outra turma</h3>
+            <form method="post" action="{{ url_for('auth.ver_turma', turma_id=turma_id) }}">
+              <input type="hidden" name="acao" value="transferir_alunos">
+              <label for="nova_turma_id">Nova turma:</label>
+              <div class="d-inline-flex">
+                <select class="form-select m-1" name="nova_turma_id" required>
+                  {% for turma in outras_turmas %}
+                    <option value="{{ turma.0 }}">{{ turma.1 }}</option>
+                  {% endfor %}
+                </select>
+                <button class="btn btn-primary" type="button" onclick="confirmarTransferencia(this.form)">Transferir</button></div>
+              </form>
+            </div>
+        {% endif %}
+      <br>
+
+  <h2>Disciplinas da Turma</h2>
+
+  <div class="border rounded p-3 bg-light mb-4">
+    {% if disciplinas %}
+      <ul class="list-group mb-3">
+        {% for disciplina in disciplinas %}
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            {{ disciplina[1] }}
+            <form method="post" class="m-0 remove-disciplina-form">
+              <input type="hidden" name="acao" value="remover_disciplina">
+              <input type="hidden" name="disciplina_id" value="{{ disciplina[0] }}">
+              <button type="button" class="btn btn-sm btn-danger" onclick="confirmarRemocaoDisciplina(this.form)">Excluir</button>
+            </form>
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p>Nenhuma disciplina vinculada a essa turma.</p>
+    {% endif %}
+
+    <form method="post" class="d-flex mt-2 gap-2">
+      <input type="hidden" name="acao" value="adicionar_disciplina">
+      <input type="text" class="form-control" name="nova_disciplina" placeholder="Nova disciplina..." required>
+      <button type="submit" class="btn btn-success">Adicionar</button>
+    </form>
+  </div>
+
+
+      <br>
+      <div class="d-flex flex-row justify-content-center gap-2">
+        <a class="btn btn-primary mt-3" href="{{ url_for('auth.gerenciar_turmas') }}">Voltar</a>
+        {% if not alunos %}
+          <form id="formExcluirTurma" method="POST" action="{{ url_for('auth.excluir_turma', turma_id=turma_id) }}">
+            <button class="btn btn-danger mt-3" type="submit" id="btnExcluirTurma">Excluir Turma</button>
+          </form>
+        {% endif %}
+      </div>
+  </div>
+  <script>
+    document.getElementById('btnExcluirTurma').addEventListener('click', function (e) {
+        e.preventDefault(); // impede envio automático
+
+        Swal.fire({
+            title: 'Tem certeza?',
+            text: 'Tem certeza que deseja EXCLUIR essa turma? ESSA AÇÃO NÃO PODE SER REVERTIDA.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Sim, excluir!',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById('formExcluirTurma').submit();
+            }
+        });
+    });
+
+      function confirmarRemocaoDisciplina(form) {
+        Swal.fire({
+          title: 'Tem certeza?',
+          text: "Deseja realmente remover esta disciplina da turma?",
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#d33',
+          cancelButtonColor: '#6c757d',
+          confirmButtonText: 'Sim, remover!',
+          cancelButtonText: 'Cancelar'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            form.submit();
+          }
+        });
+      }
+
+      function confirmarTransferencia(form) {
+        Swal.fire({
+          title: 'Tem certeza?',
+          text: "Deseja realmente trasferir todas os alunos desta truma?",
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#d33',
+          cancelButtonColor: '#6c757d',
+          confirmButtonText: 'Sim, trasnferir!',
+          cancelButtonText: 'Cancelar'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            form.submit();
+          }
+        });
+      }
+    </script>
+
+{% endblock %}

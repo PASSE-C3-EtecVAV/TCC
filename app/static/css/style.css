@@ -1,0 +1,232 @@
+.prof-coord {
+    background-image: url('../images/bg_coord.png');
+    background-size: cover;
+}
+
+.login {
+    background-image: url('../images/login.png');
+    background-size: cover;
+}
+
+.ed_funcionario {
+    background-image: url('../images/ed_funcionario.jpg');
+    background-size: cover;
+}
+
+.aluno {
+    background-image: url('../images/aluno.jpg');
+    background-size: cover;
+}
+
+.professor {
+    background-image: url('../images/aluno.jpg');
+    background-size: cover;
+}
+
+.add-conteudo {
+    background-image: url('../images/folhas.jpg');
+    background-size: cover;
+}
+
+.sidebar {
+    background-color: rgb(211, 38, 38);
+    color: #ffffff;
+    min-width: fit-content;
+}
+
+.no-underline {
+    text-decoration: none;
+    color: #ffffff;
+}
+
+.glass {
+    margin: 10px;
+    min-width: 300px;
+    width: fit-content;
+    background: rgba(255, 255, 255, 0);
+    border-radius: 16px;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.29);
+}
+
+.link:hover {
+    background-color: #0000004d;
+}
+
+.btn-square {
+    min-width: 100px;
+    min-height: 100px;
+}
+
+.btn-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+.main-link {
+    display: inline-block;
+    position: relative;
+}
+
+.trash-link {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    width: 15%;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.btn-wrapper:hover .trash-link {
+    opacity: 1;
+}
+
+.trash-link img {
+    width: 100%;
+    display: block;
+}
+
+.professor {
+    background-image: url('../images/bg_coord.png');
+    background-size: cover;
+}
+
+.turma-container {
+    display: flex;
+    font-family: sans-serif;
+}
+
+.turma-sidebar {
+    width: 200px;
+    padding: 10px;
+    border-right: 1px solid #ccc;
+    background-color: #f8f8f8;
+}
+
+.turma-info-box {
+    text-align: center;
+    margin-bottom: 20px;
+    font-weight: bold;
+}
+
+.menu form,
+.btn-voltar {
+    display: block;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.turma-main {
+    padding: 40px;
+    flex-grow: 1;
+    background-color: #fafafa;
+    min-height: 100vh;
+}
+
+.turma-titulo {
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 24px;
+}
+
+.postagens {
+    background: #fff;
+    padding: 30px;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+}
+
+.tabela-postagens {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 30px;
+}
+
+.tabela-postagens th,
+.tabela-postagens td {
+    border: 1px solid #ccc;
+    padding: 10px;
+    text-align: left;
+}
+
+.tabela-postagens th {
+    background-color: #f0f0f0;
+}
+
+.btn-adicionar {
+    display: block;
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    font-size: 24px;
+    font-weight: bold;
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.btn-adicionar:hover {
+    background-color: #43a047;
+}
+
+.menu {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.menu form {
+    width: 100%;
+}
+
+.atividades-grid {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.atividade-coluna {
+    flex: 1;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+    text-align: center;
+}
+
+.atividade-coluna h3 {
+    margin-bottom: 15px;
+    font-size: 18px;
+    color: #333;
+}
+
+.sem-atividades {
+    color: #888;
+    font-style: italic;
+}
+
+/* SEM margem por padrão (em telas pequenas) */
+#conteudo {
+    margin-left: 0;
+}
+
+/* APLICA margem só em telas md ou maiores */
+@media (min-width: 768px) {
+    #conteudo {
+        margin-left: 250px;
+    }
+}
+
+.square{
+    min-width: 100px;
+    width: fit-content;
+    max-width: 200px;
+    min-height: 100px;
+    height: fit-content;
+    max-height: 200px;
+}

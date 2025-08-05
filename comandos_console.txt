@@ -1,0 +1,7 @@
+.venv\Scripts\activate
+
+python run.py
+
+servidor visivel na rede: (flask --app run.py --debug run --host=0.0.0.0)
+
+Nessa ordem em

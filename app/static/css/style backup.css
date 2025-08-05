@@ -1,0 +1,79 @@
+.prof-coord {
+    background-image: url('../images/bg_coord.png');
+    background-size: cover;
+}
+
+.login {
+    background-image: url('../images/login.png');
+    background-size: cover;
+}
+
+.ed_funcionario {
+    background-image: url('../images/ed_funcionario.jpg');
+    background-size: cover;
+}
+
+.ed_aluno {
+    background-image: url('../images/ed_aluno.jpg');
+    background-size: cover;
+}
+
+.sidebar {
+    background-color: rgb(211, 38, 38);
+    color: #ffffff;
+    min-width: fit-content;
+}
+
+.no-underline {
+    text-decoration: none;
+    color: #ffffff;
+}
+
+.glass {
+    margin: 10px;
+    min-width: 300px;
+    width: fit-content;
+    background: rgba(255, 255, 255, 0);
+    border-radius: 16px;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.29);
+}
+
+.link:hover {
+    background-color: #0000006b;
+}
+
+.btn-square {
+    min-width: 100px;
+    min-height: 100px;
+}
+
+.btn-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+.main-link {
+    display: inline-block;
+    position: relative;
+}
+
+.trash-link {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    width: 15%;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.btn-wrapper:hover .trash-link {
+    opacity: 1;
+}
+
+.trash-link img {
+    width: 100%;
+    display: block;
+}

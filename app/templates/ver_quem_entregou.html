@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  {% block title %}
+    Ver Entregas Da Atividade
+  {% endblock %}
+{% endblock %}
+
+{% block botaonav %}
+  <button class="btn btn-outline-dark d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarOffcanvas">☰</button>
+{% endblock %}
+
+{% block conteudo %}
+  <!-- Sidebar telas pequenas -->
+  <div class="offcanvas offcanvas-start d-md-none" tabindex="-1" id="sidebarOffcanvas">
+    <div class="offcanvas-header">
+      <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+    </div>
+    <div class="offcanvas-body">
+      <h5 class="offcanvas-title border border-black d-flex justify-content-center align-items-center text-center square mb-2">{{ nome_disciplina }}</h5>
+      <ul class="nav flex-column">
+        <li class="nav-item border-bottom border-black m-1">
+          <form method="get" action="{{ url_for('auth.postagens_prof', turma_id=turma_id, disciplina_id=disciplina_id, nome_disciplina=nome_disciplina) }}">
+            <button class="btn w-100 text-start rounded-0 p-1 link" type="submit">Postagens</button>
+          </form>
+        </li>
+        <li class="nav-item border-bottom border-black m-1">
+          <form method="get" action="{{ url_for('auth.atividade_prof', turma_id=turma_id, disciplina_id=disciplina_id, nome_disciplina=nome_disciplina) }}">
+            <button class="btn w-100 text-start rounded-0 p-1 link">Atividades</button>
+          </form>
+        </li>
+        <li class="nav-item border-bottom border-black m-1">
+          <form method="get" action="{{ url_for('auth.arquivos_prof',  turma_id=turma_id, disciplina_id=disciplina_id, nome_disciplina=nome_disciplina) }}">
+            <button class="btn w-100 text-start rounded-0 p-1 link">Arquivos</button>
+          </form>
+        </li>
+        <li class="nav-item border-bottom border-black m-1">
+          <form method="get" action="{{ url_for('auth.materias_prof', turma_id=turma_id) }}">
+            <button class="btn w-100 text-start rounded-0 p-1 link" class="btn-voltar">Voltar</button>
+          </form>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Sidebar telas médias e maiores -->
+  <div class="d-none d-md-block bg-light position-fixed start-0 top-0 pt-5 h-100 border-end border-black z-0" style="width: 250px;">
+    <div class="p-3">
+      <h5 class="border border-black d-flex justify-content-center align-items-center text-center square bg-white mb-3">{{ nome_disciplina }}</h5>
+      <ul class="nav flex-column">
+        <li class="nav-item border-bottom border-black m-1">
+          <form method="get" action="{{ url_for('auth.postagens_prof', turma_id=turma_id, disciplina_id=disciplina_id, nome_disciplina=nome_disciplina) }}">
+            <button class="btn w-100 text-start rounded-0 p-1 link">Postagens</button>
+          </form>
+        </li>
+        <li class="nav-item border-bottom border-black m-1">
+          <form method="get" action="{{ url_for('auth.atividade_prof', turma_id=turma_id, disciplina_id=disciplina_id, nome_disciplina=nome_disciplina) }}">
+            <button class="btn w-100 text-start rounded-0 p-1 link">Atividades</button>
+          </form>
+        </li>
+        <li class="nav-item border-bottom border-black m-1">
+          <form method="get" action="{{ url_for('auth.arquivos_prof', turma_id=turma_id, disciplina_id=disciplina_id, nome_disciplina=nome_disciplina) }}">
+            <button class="btn w-100 text-start rounded-0 p-1 link">Arquivos</button>
+          </form>
+        </li>
+        <li class="nav-item border-bottom border-black m-1">
+          <form method="get" action="{{ url_for('auth.materias_prof', turma_id=turma_id) }}">
+            <button class="btn w-100 text-start rounded-0 p-1 link">Voltar às matérias</button>
+          </form>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Conteúdo principal -->
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col" id="conteudo">
+        <h2 class="text-center m-2">Entregas</h2>
+          {% if alunos %}
+        <table class="table table-bordered">
+          <thead>
+            <tr>
+              <th>Aluno</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for aluno in alunos %}
+              <tr>
+                <td>{{ aluno.aluno_nome }}</td>
+                <td>
+                  {% if aluno.entrega_id %}
+                  <form method="get" action="{{ url_for('auth.ver_entrega_individual', turma_id=turma_id, disciplina_id=disciplina_id, nome_disciplina=nome_disciplina, atividade_id=atividade_id, aluno_id=aluno.aluno_id) }}">
+                    <button class="btn btn-outline-primary">Ver Entregas</button>
+                  </form>
+                {% else %}
+                  <span class="text-danger">Não entregue</span>
+                {% endif %}
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      {% else %}
+        <div class="alert alert-info text-center">Nenhum aluno encontrado nesta turma.</div>
+      {% endif %}
+
+      <div class="text-center">
+        <a href="{{ url_for('auth.atividade_prof', turma_id=turma_id, disciplina_id=disciplina_id, nome_disciplina=nome_disciplina) }}"
+          class="btn btn-secondary mt-3">Voltar</a>
+      </div>  
+      </div>
+    </div>
+  </div>
+{% endblock %}

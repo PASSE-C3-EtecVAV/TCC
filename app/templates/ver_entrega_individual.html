@@ -1,0 +1,130 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  {% block title %}
+    Ver Entregas Da Atividade
+  {% endblock %}
+{% endblock %}
+
+{% block botaonav %}
+  <button class="btn btn-outline-dark d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarOffcanvas">☰</button>
+{% endblock %}
+
+{% block conteudo %}
+  <!-- Sidebar telas pequenas -->
+  <div class="offcanvas offcanvas-start d-md-none" tabindex="-1" id="sidebarOffcanvas">
+    <div class="offcanvas-header">
+      <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+    </div>
+    <div class="offcanvas-body">
+      <h5 class="offcanvas-title border border-black d-flex justify-content-center align-items-center text-center square mb-2">{{ nome_disciplina }}</h5>
+      <ul class="nav flex-column">
+        <li class="nav-item border-bottom border-black m-1">
+          <form method="get" action="{{ url_for('auth.postagens_prof', turma_id=turma_id, disciplina_id=disciplina_id, nome_disciplina=nome_disciplina) }}">
+            <button class="btn w-100 text-start rounded-0 p-1 link" type="submit">Postagens</button>
+          </form>
+        </li>
+        <li class="nav-item border-bottom border-black m-1">
+          <form method="get" action="{{ url_for('auth.atividade_prof', turma_id=turma_id, disciplina_id=disciplina_id, nome_disciplina=nome_disciplina) }}">
+            <button class="btn w-100 text-start rounded-0 p-1 link">Atividades</button>
+          </form>
+        </li>
+        <li class="nav-item border-bottom border-black m-1">
+          <form method="get" action="{{ url_for('auth.arquivos_prof',  turma_id=turma_id, disciplina_id=disciplina_id, nome_disciplina=nome_disciplina) }}">
+            <button class="btn w-100 text-start rounded-0 p-1 link">Arquivos</button>
+          </form>
+        </li>
+        <li class="nav-item border-bottom border-black m-1">
+          <form method="get" action="{{ url_for('auth.materias_prof', turma_id=turma_id) }}">
+            <button class="btn w-100 text-start rounded-0 p-1 link" class="btn-voltar">Voltar</button>
+          </form>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Sidebar telas médias e maiores -->
+  <div class="d-none d-md-block bg-light position-fixed start-0 top-0 pt-5 h-100 border-end border-black z-0" style="width: 250px;">
+    <div class="p-3">
+      <h5 class="border border-black d-flex justify-content-center align-items-center text-center square bg-white mb-3">{{ nome_disciplina }}</h5>
+      <ul class="nav flex-column">
+        <li class="nav-item border-bottom border-black m-1">
+          <form method="get" action="{{ url_for('auth.postagens_prof', turma_id=turma_id, disciplina_id=disciplina_id, nome_disciplina=nome_disciplina) }}">
+            <button class="btn w-100 text-start rounded-0 p-1 link">Postagens</button>
+          </form>
+        </li>
+        <li class="nav-item border-bottom border-black m-1">
+          <form method="get" action="{{ url_for('auth.atividade_prof', turma_id=turma_id, disciplina_id=disciplina_id, nome_disciplina=nome_disciplina) }}">
+            <button class="btn w-100 text-start rounded-0 p-1 link">Atividades</button>
+          </form>
+        </li>
+        <li class="nav-item border-bottom border-black m-1">
+          <form method="get" action="{{ url_for('auth.arquivos_prof', turma_id=turma_id, disciplina_id=disciplina_id, nome_disciplina=nome_disciplina) }}">
+            <button class="btn w-100 text-start rounded-0 p-1 link">Arquivos</button>
+          </form>
+        </li>
+        <li class="nav-item border-bottom border-black m-1">
+          <form method="get" action="{{ url_for('auth.materias_prof', turma_id=turma_id) }}">
+            <button class="btn w-100 text-start rounded-0 p-1 link">Voltar às matérias</button>
+          </form>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Conteúdo principal -->
+<div class="container-fluid">
+    <div class="row">
+        <div class="col" id="conteudo">
+        <div class="container mt-4">
+            <h2 class="text-center">{{ atividade.titulo }}</h2>
+            <p>{{ atividade.descricao }}</p>
+            <p>
+            <strong>Prazo para atraso:</strong> {{ atividade.data_atraso.strftime('%d/%m/%Y %H:%M') }}<br>
+            <strong>Encerramento:</strong> {{ atividade.data_encerramento.strftime('%d/%m/%Y %H:%M') }}
+            </p>
+
+            {% if atividade.arquivo %}
+            <div class="mb-3">
+                <a href="{{ url_for('static', filename='uploads/' + atividade.arquivo) }}" 
+                class="btn btn-primary" download>
+                Baixar Arquivo da Atividade
+                </a>
+            </div>
+            {% endif %}
+
+            {% if entrega %}
+            <div class="mb-3">
+                <h5>Resposta do Aluno:</h5>
+                <p>{{ entrega.texto if entrega.texto else "Sem texto enviado." }}</p>
+            </div>
+
+            {% if entrega.nome_arquivo %}
+                <div class="mb-3">
+                <a href="{{ url_for('auth.download_entrega', entrega_id=entrega.id) }}" 
+                    class="btn btn-outline-primary">
+                    Baixar "{{ entrega.arquivo }}"
+                </a>
+                </div>
+            {% endif %}
+
+            <form method="POST">
+                <div class="mb-3">
+                <label for="anotacao" class="form-label">Anotação para o aluno:</label>
+                <textarea name="anotacao" id="anotacao" class="form-control" rows="4">{{ entrega.anotacao or "" }}</textarea>
+                </div>
+                <button type="submit" class="btn btn-success">Salvar Anotação</button>
+            </form>
+            {% else %}
+            <div class="alert alert-info">O aluno não enviou esta atividade.</div>
+            {% endif %}
+
+            <div class="text-center mt-3">
+            <a href="{{ url_for('auth.ver_quem_entregou', turma_id=turma_id, disciplina_id=disciplina_id, nome_disciplina=nome_disciplina, atividade_id=atividade.id) }}" 
+                class="btn btn-secondary">Voltar</a>
+            </div>
+        </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

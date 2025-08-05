@@ -1,0 +1,146 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  {% block title %}
+    Turma
+  {% endblock %}
+{% endblock %}
+
+{% block botaonav %}
+  <button class="btn btn-outline-dark d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarOffcanvas">☰</button>
+{% endblock %}
+
+{% block conteudo %}
+  <!-- Sidebar telas pequenas -->
+  <div class="offcanvas offcanvas-start d-md-none" tabindex="-1" id="sidebarOffcanvas">
+    <div class="offcanvas-header">
+      <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+    </div>
+    <div class="offcanvas-body">
+      <h5 class="offcanvas-title border border-black d-flex justify-content-center align-items-center text-center square mb-2">{{ nome_disciplina }}</h5>
+      <ul class="nav flex-column">
+        <li class="nav-item border-bottom border-black m-1">
+          <form method="get" action="{{ url_for('auth.postagens_prof', turma_id=turma_id, disciplina_id=disciplina_id, nome_disciplina=nome_disciplina) }}">
+            <button class="btn w-100 text-start rounded-0 p-1 link" type="submit">Postagens</button>
+          </form>
+        </li>
+        <li class="nav-item border-bottom border-black m-1">
+          <form method="get" action="{{ url_for('auth.atividade_prof', turma_id=turma_id, disciplina_id=disciplina_id, nome_disciplina=nome_disciplina) }}">
+            <button class="btn w-100 text-start rounded-0 p-1 link">Atividades</button>
+          </form>
+        </li>
+        <li class="nav-item border-bottom border-black m-1">
+          <form method="get" action="{{ url_for('auth.arquivos_prof',  turma_id=turma_id, disciplina_id=disciplina_id, nome_disciplina=nome_disciplina) }}">
+            <button class="btn w-100 text-start rounded-0 p-1 link">Arquivos</button>
+          </form>
+        </li>
+        <li class="nav-item border-bottom border-black m-1">
+          <form method="get" action="{{ url_for('auth.materias_prof', turma_id=turma_id) }}">
+            <button class="btn w-100 text-start rounded-0 p-1 link" class="btn-voltar">Voltar</button>
+          </form>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Sidebar telas médias e maiores -->
+  <div class="d-none d-md-block bg-light position-fixed start-0 top-0 pt-5 h-100 border-end border-black z-0" style="width: 250px;">
+    <div class="p-3">
+      <h5 class="border border-black d-flex justify-content-center align-items-center text-center square bg-white mb-3">{{ nome_disciplina }}</h5>
+      <ul class="nav flex-column">
+        <li class="nav-item border-bottom border-black m-1">
+          <form method="get" action="{{ url_for('auth.postagens_prof', turma_id=turma_id, disciplina_id=disciplina_id, nome_disciplina=nome_disciplina) }}">
+            <button class="btn w-100 text-start rounded-0 p-1 link">Postagens</button>
+          </form>
+        </li>
+        <li class="nav-item border-bottom border-black m-1">
+          <form method="get" action="{{ url_for('auth.atividade_prof', turma_id=turma_id, disciplina_id=disciplina_id, nome_disciplina=nome_disciplina) }}">
+            <button class="btn w-100 text-start rounded-0 p-1 link">Atividades</button>
+          </form>
+        </li>
+        <li class="nav-item border-bottom border-black m-1">
+          <form method="get" action="{{ url_for('auth.arquivos_prof', turma_id=turma_id, disciplina_id=disciplina_id, nome_disciplina=nome_disciplina) }}">
+            <button class="btn w-100 text-start rounded-0 p-1 link">Arquivos</button>
+          </form>
+        </li>
+        <li class="nav-item border-bottom border-black m-1">
+          <form method="get" action="{{ url_for('auth.materias_prof', turma_id=turma_id) }}">
+            <button class="btn w-100 text-start rounded-0 p-1 link">Voltar às matérias</button>
+          </form>
+        </li>
+      </ul>
+    </div>
+  </div>
+  <!-- Conteúdo principal -->
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col" id="conteudo">
+        <h2 class="text-center m-2">Postagens</h2>
+
+        {% if postagens %}
+          {% for postagem in postagens %}
+            <div class="card border-black text-center mb-3">
+              <!-- Título do post -->
+              <div class="card-header bg-white">
+                <h5 class="mb-0">{{ postagem[1] }}</h5> <!-- TÍTULO -->
+              </div>
+
+              <div class="card-body">
+                <p class="card-text">{{ postagem[2] }}</p> <!-- CONTEÚDO -->
+                <div class="text-center mt-2">
+                {% if postagem[4] %}
+                    <a href="{{ url_for('static', filename='uploads/' ~ postagem[4]) }}" 
+                      class="btn btn-outline-primary m-1" download>
+                      Baixar Arquivo
+                    </a>
+                  {% endif %}
+                  
+                  <form method="POST" action="{{ url_for('auth.excluir_post', post_id=postagem[0]) }}" class="form-excluir-postagem">
+                    <button type="submit" class="btn btn-outline-danger m-1">Excluir publicação</button>
+                  </form>
+
+                  <form method="GET" 
+                    action="{{ url_for('auth.editar_postagem', turma_id=turma_id, disciplina_id=disciplina_id, nome_disciplina=nome_disciplina, post_id=postagem[0]) }}" style="display:inline;">
+                      <button type="submit" class="btn btn-outline-warning m-1">Editar</button>
+                  </form>
+                  </div>
+                </div>
+
+              <div class="card-footer bg-white">Data: {{ postagem[3].strftime('%d/%m/%Y') }}</div>
+            </div>
+          {% endfor %}
+        {% else %}
+          <div class="alert alert-info text-center mt-4">
+            Nenhuma postagem encontrada.
+          </div>
+        {% endif %}
+
+        <div class="d-flex align-items-center justify-content-center">
+          <form action="{{ url_for('auth.adicionar_post', turma_id=turma_id, disciplina_id=disciplina_id, nome_disciplina=nome_disciplina) }}">
+            <button type="submit" class="btn-adicionar mt-2">+</button>
+          </form>
+        </div>
+    </div>
+  </div>
+
+  <script>
+    document.querySelectorAll('.form-excluir-postagem').forEach(form => {
+      form.addEventListener('submit', function (e) {
+        e.preventDefault(); // impede envio imediato
+
+        Swal.fire({
+          title: 'Tem certeza?',
+          text: 'Essa postagem e o arquivo serão apagados!',
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonText: 'Sim, excluir!',
+          cancelButtonText: 'Cancelar'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            form.submit();
+          }
+        });
+      });
+    });
+  </script>
+{% endblock %}

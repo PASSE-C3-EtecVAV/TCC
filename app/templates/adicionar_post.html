@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  {% block title %}
+    Fazer publicação
+  {% endblock %}
+{% endblock %}
+
+{% block classe %}
+  add-conteudo
+{% endblock %}
+
+{% block conteudo %}
+  <div class="flex-fill d-flex align-items-center justify-content-center">
+    <div class="text-center border border-black rounded bg-body-tertiary m-1 p-3">
+      <h1>Fazer publicação para a sua turma</h1>
+
+
+      {% if erro %}
+        <p style="color: red;">{{ erro }}</p>
+      {% endif %}
+
+      <form method="POST" action="{{ url_for('auth.adicionar_post', turma_id=turma_id, disciplina_id=disciplina_id, nome_disciplina=nome_disciplina) }}" enctype="multipart/form-data">
+          <!-- Título da publicação -->
+          <label for="titulo">Título da publicação</label>
+          <input class="form-control m-1" type="text" name="titulo" id="titulo" required />
+
+          <!-- Conteúdo da publicação -->
+          <label for="conteudo">Conteúdo da publicação:</label>
+          <textarea class="form-control m-1" name="conteudo" id="conteudo" rows="5" required></textarea>
+
+          <!-- Upload de Arquivo -->
+          <label for="arquivo">Anexar Arquivo:</label>
+          <input class="form-control m-1" type="file" name="arquivo" id="arquivo">
+
+          <button class="btn btn-primary m-1" type="submit">Publicar</button>
+      </form>
+      <a class="btn btn-primary m-1" href="{{ url_for('auth.postagens_prof', turma_id=turma_id, disciplina_id=disciplina_id) }}">Voltar</a>
+    </div>
+  </div>
+{% endblock %}
