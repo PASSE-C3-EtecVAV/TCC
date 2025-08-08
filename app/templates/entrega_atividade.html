@@ -84,7 +84,7 @@
 
           {% if atividade.arquivo %}
             <div class="mb-3">
-              <a href="{{ url_for('static', filename='uploads/' + atividade.arquivo) }}" class="btn btn-primary" download>
+              <a href="{{ atividade.arquivo }}" class="btn btn-primary" download target="_blank">
                 Baixar Arquivo da Atividade
               </a>
             </div>

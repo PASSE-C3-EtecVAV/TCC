@@ -89,8 +89,8 @@
               <!-- Nome do Arquivo -->
               <span>{{ arquivo.nome_original }}</span>
               <div>
-                <a href="{{ url_for('static', filename='uploads/' + arquivo.nome_arquivo) }}" 
-                   class="btn btn-secondary" download>
+                <a download target="_blank" href="{{ arquivo.nome_arquivo }}" 
+                   class="btn btn-secondary" >
                   Baixar
                 </a>
               </div>

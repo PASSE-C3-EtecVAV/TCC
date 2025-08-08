@@ -87,7 +87,7 @@
             <div class="d-flex justify-content-between align-items-center border rounded p-2 m-1">
               <span>{{ arquivo.nome_original }}</span>
               <div>
-                <a href="{{ url_for('static', filename='uploads/' + arquivo.nome_arquivo) }}"  download><button class="btn btn-primary">Baixar</button></a>
+                <a download target="_blank" href="{{ arquivo.nome_arquivo }}" ><button class="btn btn-primary">Baixar</button></a>
                   <form action="{{ url_for('auth.excluir_arquivo', arquivo_id=arquivo.id) }}" method="post" style="display:inline;"><button type="submit" class="btn btn-danger">Excluir</button></form>
               </div>
             </div>

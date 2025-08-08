@@ -89,7 +89,7 @@
                 <p class="card-text">{{ postagem[2] }}</p> <!-- CONTEÚDO -->
                 <div class="text-center mt-2">
                 {% if postagem[4] %}
-                    <a href="{{ url_for('static', filename='uploads/' ~ postagem[4]) }}" 
+                    <a download target="_blank" href="{{ postagem[4] }}" 
                       class="btn btn-outline-primary m-1" download>
                       Baixar Arquivo
                     </a>

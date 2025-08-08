@@ -88,8 +88,8 @@
 
                 {% if post.arquivo %}
                   <div class="mt-3">
-                    <a href="{{ url_for('static', filename='uploads/' + post.arquivo) }}" 
-                      class="btn btn-outline-primary m-1" download>
+                    <a download target="_blank" href="{{ post.arquivo }}" 
+                      class="btn btn-outline-primary m-1" >
                       Baixar Arquivo
                     </a>
                   </div>

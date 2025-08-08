@@ -1,15 +1,58 @@
 from flask import Blueprint, render_template, request, redirect, session, url_for, flash, current_app, send_from_directory
 from app.models.usuario import Usuario
-from app import mysql
+from app import mysql, s3
 import MySQLdb.cursors
 from datetime import datetime
 from werkzeug.security import generate_password_hash
 import os
 from werkzeug.utils import secure_filename
+from botocore.exceptions import ClientError
+from urllib.parse import unquote
+
 
 
 bp = Blueprint('auth', __name__)
 
+
+def apagar_arquivo(url):
+    if not url:
+        return
+    try:
+        object_key = url.split(f"{current_app.config['S3_BUCKET_NAME']}.s3.{current_app.config['AWS_REGION']}.amazonaws.com/")[-1]
+        
+        # Decodifica a chave do objeto para lidar com caracteres especiais no nome do arquivo
+        decoded_key = unquote(object_key)
+
+        s3.client.delete_object(
+            Bucket=current_app.config['S3_BUCKET_NAME'],
+            Key=decoded_key
+        )
+        print(f"Objeto {decoded_key} deletado do S3 com sucesso.")
+    except ClientError as e:
+        # Loga o erro se a exclusão falhar, mas não impede a atualização do perfil
+        print(f"Erro ao deletar objeto do S3: {e}")
+    except Exception as e:
+        print(f"Ocorreu um erro inesperado ao tentar deletar o objeto do S3: {e}")
+    
+
+def salvar_arquivo(arquivo, nome_unico):
+    try:
+        s3.client.upload_fileobj(
+            arquivo,
+            current_app.config['S3_BUCKET_NAME'],
+            nome_unico,
+            ExtraArgs={
+            'ContentType': arquivo.content_type
+            }
+        )
+        return False, f"https://{current_app.config['S3_BUCKET_NAME']}.s3.{current_app.config['AWS_REGION']}.amazonaws.com/{nome_unico}"
+    except ClientError as e:
+        flash(f'Erro ao fazer upload para o S3 para {arquivo.filename}: {e}', 'danger')
+        print(f"Erro S3: {e}")
+    except Exception as e:
+        flash(f'Erro inesperado ao processar {arquivo.filename}: {e}', 'danger')
+        print(f"Erro geral: {e}")
+    return False, "Erro"
 
 # Codígo para Login
 
@@ -744,9 +787,9 @@ def adicionar_post(turma_id, disciplina_id, nome_disciplina):
                 nome_disciplina_seguro = secure_filename(nome_disciplina)
 
                 nome_formatado = f"{nome_original}_{nome_disciplina_seguro}_{data_atual}.{extensao}"
-                caminho_upload = os.path.join(current_app.static_folder, 'uploads', nome_formatado)
-                arquivo.save(caminho_upload)
-                nome_arquivo = nome_formatado
+                nome_arquivo = salvar_arquivo(arquivo, nome_formatado)[1]
+                
+                
 
             cursor = mysql.connection.cursor()
             professor_id = session['usuario_id']
@@ -789,9 +832,7 @@ def excluir_post(post_id):
 
     # Remover arquivo se existir
     if arquivo:
-        caminho = os.path.join(current_app.static_folder, 'uploads', arquivo)
-        if os.path.exists(caminho):
-            os.remove(caminho)
+        apagar_arquivo(arquivo)
 
     return redirect(url_for('auth.postagens_prof', turma_id=turma_id, disciplina_id=disciplina_id))
 
@@ -822,10 +863,8 @@ def adicionar_atividade(turma_id, disciplina_id, nome_disciplina):
                 nome_disciplina_seguro = secure_filename(nome_disciplina)
 
                 nome_formatado = f"{nome_original}_{nome_disciplina_seguro}_{data_atual}.{extensao}"
-                caminho = os.path.join(current_app.static_folder, 'uploads', nome_formatado)
-                arquivo.save(caminho)
-                nome_arquivo = nome_formatado
-
+                nome_arquivo = salvar_arquivo(arquivo, nome_formatado)[1]
+                print(nome_arquivo)
             professor_id = session['usuario_id']
 
             cursor = mysql.connection.cursor()
@@ -897,9 +936,7 @@ def excluir_atividade(atividade_id):
 
         # Se existe arquivo, remover da pasta uploads
         if arquivo:
-            caminho_arquivo = os.path.join(current_app.static_folder, 'uploads', arquivo)
-            if os.path.exists(caminho_arquivo):
-                os.remove(caminho_arquivo)
+            apagar_arquivo(arquivo)
 
         flash("Atividade excluída com sucesso!", "success")
     else:
@@ -954,11 +991,7 @@ def upload_arquivo(turma_id, disciplina_id, nome_disciplina):
 
     # Nome final
     nome_arquivo = f"{nome_original}_{nome_disciplina_seguro}_{data_atual}.{extensao}"
-    caminho = os.path.join(current_app.static_folder, 'uploads', nome_arquivo)
-    
-    # Salvar arquivo fisicamente
-    arquivo.save(caminho)
-
+    nome_arquivo = salvar_arquivo(arquivo, nome_arquivo)[1]
     # Inserir no banco
     professor_id = session['usuario_id']
     cursor = mysql.connection.cursor()
@@ -996,9 +1029,7 @@ def excluir_arquivo(arquivo_id):
     cursor.close()
 
     # Excluir do sistema de arquivos
-    caminho_arquivo = os.path.join(current_app.static_folder, 'uploads', arquivo['nome_arquivo'])
-    if os.path.exists(caminho_arquivo):
-        os.remove(caminho_arquivo)
+    apagar_arquivo(arquivo['nome_arquivo'])
 
     flash(f"Arquivo '{arquivo['nome_original']}' excluído com sucesso!", "success")
 
@@ -1212,9 +1243,7 @@ def entrega_atividade(turma_id, disciplina_id, nome_disciplina, atividade_id):
 
             # Excluir arquivo físico
             if entrega['nome_arquivo']:
-                caminho_arquivo = os.path.join(current_app.static_folder, 'uploads', entrega['nome_arquivo'])
-                if os.path.exists(caminho_arquivo):
-                    os.remove(caminho_arquivo)
+                apagar_arquivo(entrega['nome_arquivo'])
 
             # Excluir do banco
             cursor.execute("DELETE FROM entregas WHERE id = %s", (entrega['id'],))
@@ -1232,8 +1261,7 @@ def entrega_atividade(turma_id, disciplina_id, nome_disciplina, atividade_id):
                 nome_arquivo_original = secure_filename(arquivo.filename)
                 extensao = arquivo.filename.rsplit('.', 1)[-1]
                 nome_arquivo_salvo = f"{atividade_id}_{aluno_id}.{extensao}"
-                caminho_upload = os.path.join(current_app.static_folder, 'uploads', nome_arquivo_salvo)
-                arquivo.save(caminho_upload)
+                nome_arquivo_salvo = salvar_arquivo(arquivo,  nome_arquivo_salvo)[1]
 
             cursor.execute("""
                 INSERT INTO entregas (atividade_id, aluno_id, arquivo, nome_arquivo, texto, data_entrega)
@@ -1443,15 +1471,12 @@ def editar_tarefa(turma_id, disciplina_id, nome_disciplina, atividade_id):
             # Novo padrão de nome
             nome_arquivo = f"{nome_original}_{nome_disciplina}_{data_atual}.{extensao}"
 
-            caminho_upload = os.path.join(current_app.static_folder, 'uploads', nome_arquivo)
-
             # Exclui arquivo anterior se existir
             if atividade['arquivo']:
-                caminho_antigo = os.path.join(current_app.static_folder, 'uploads', atividade['arquivo'])
-                if os.path.exists(caminho_antigo):
-                    os.remove(caminho_antigo)
+                apagar_arquivo(atividade['arquivo'])
+            salvar_arquivo(arquivo, nome_arquivo)[1]
+            nome_arquivo = salvar_arquivo
 
-            arquivo.save(caminho_upload)
 
         cursor.execute("""
             UPDATE atividades
@@ -1511,16 +1536,12 @@ def editar_postagem(turma_id, disciplina_id, nome_disciplina, post_id):
             nome_disciplina_seguro = secure_filename(nome_disciplina)
 
             novo_arquivo = f"{nome_original}_{nome_disciplina_seguro}_{data_atual}.{extensao}"
-            caminho_upload = os.path.join(current_app.static_folder, 'uploads', novo_arquivo)
 
             # Exclui arquivo anterior
             if postagem['arquivo']:
-                caminho_antigo = os.path.join(current_app.static_folder, 'uploads', postagem['arquivo'])
-                if os.path.exists(caminho_antigo):
-                    os.remove(caminho_antigo)
+                apagar_arquivo(postagem['arquivo'])
 
-            arquivo.save(caminho_upload)
-            nome_arquivo = novo_arquivo
+            nome_arquivo = salvar_arquivo(arquivo, novo_arquivo)[1]
 
         cursor.execute("""
             UPDATE postagens
