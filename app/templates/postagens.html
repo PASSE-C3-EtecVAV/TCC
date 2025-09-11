@@ -12,31 +12,31 @@
 
 {% block conteudo %}
   <!-- Sidebar telas pequenas -->
-  <div class="offcanvas offcanvas-start d-md-none" tabindex="-1" id="sidebarOffcanvas">
+  <div class="offcanvas offcanvas-start d-md-none bg-danger" tabindex="-1" id="sidebarOffcanvas">
     <div class="offcanvas-header">
       <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
     </div>
     <div class="offcanvas-body">
       <h5 class="border border-black d-flex justify-content-center align-items-center text-center square bg-white mb-3">{{ nome_disciplina }}</h5>
       <ul class="nav flex-column">
-        <li class="nav-item border-bottom border-black m-1">
+        <li class="nav-item border-black m-1">
           <form method="get" action="{{ url_for('auth.postagens', turma_id=turma_id, disciplina_id=disciplina_id, nome_disciplina=nome_disciplina) }}">
-            <button class="btn w-100 text-start rounded-0 p-1 link" type="submit">Postagens</button>
+            <button class="btn w-100 text-start rounded-2 p-1 link border border-black no-underline" type="submit">Postagens</button>
           </form>
         </li>
-        <li class="nav-item border-bottom border-black m-1">
+        <li class="nav-item border-black m-1">
           <form method="get" action="{{ url_for('auth.atividades', turma_id=turma_id, disciplina_id=disciplina_id, nome_disciplina=nome_disciplina) }}">
-            <button class="btn w-100 text-start rounded-0 p-1 link">Atividades</button>
+            <button class="btn w-100 text-start rounded-2 p-1 link border border-black no-underline">Atividades</button>
           </form>
         </li>
-        <li class="nav-item border-bottom border-black m-1">
+        <li class="nav-item border-black m-1">
           <form method="get" action="{{ url_for('auth.arquivos', turma_id=turma_id, disciplina_id=disciplina_id, nome_disciplina=nome_disciplina) }}">
-            <button class="btn w-100 text-start rounded-0 p-1 link">Arquivos</button>
+            <button class="btn w-100 text-start rounded-2 p-1 link border border-black no-underline">Arquivos</button>
           </form>
         </li>
-        <li class="nav-item border-bottom border-black m-1">
+        <li class="nav-item border-black m-1">
           <form method="get" action="{{ url_for('auth.materias') }}">
-            <button class="btn w-100 text-start rounded-0 p-1 link" class="btn-voltar">Voltar</button>
+            <button class="btn w-100 text-start rounded-2 p-1 link border border-black no-underline" class="btn-voltar">Voltar</button>
           </form>
         </li>
       </ul>
@@ -44,28 +44,28 @@
   </div>
 
   <!-- Sidebar telas médias e maiores -->
-  <div class="d-none d-md-block bg-light position-fixed start-0 top-0 pt-5 h-100 border-end border-black z-0" style="width: 250px;">
+  <div class="d-none d-md-block bg-danger position-fixed start-0 top-0 pt-5 h-100 border-end border-black z-0" style="width: 250px;">
     <div class="p-3">
       <h5 class="border border-black d-flex justify-content-center align-items-center text-center square bg-white mb-3">{{ nome_disciplina }}</h5>
       <ul class="nav flex-column">
-        <li class="nav-item border-bottom border-black m-1">
+        <li class="nav-item border-black m-1">
           <form method="get" action="{{ url_for('auth.postagens', turma_id=turma_id, disciplina_id=disciplina_id, nome_disciplina=nome_disciplina) }}">
-            <button class="btn w-100 text-start rounded-0 p-1 link">Postagens</button>
+            <button class="btn w-100 text-start rounded-2 p-1 link border border-black no-underline">Postagens</button>
           </form>
         </li>
-        <li class="nav-item border-bottom border-black m-1">
+        <li class="nav-item border-black m-1">
           <form method="get" action="{{ url_for('auth.atividades', turma_id=turma_id, disciplina_id=disciplina_id, nome_disciplina=nome_disciplina) }}">
-            <button class="btn w-100 text-start rounded-0 p-1 link">Atividades</button>
+            <button class="btn w-100 text-start rounded-2 p-1 link border border-black no-underline">Atividades</button>
           </form>
         </li>
-        <li class="nav-item border-bottom border-black m-1">
+        <li class="nav-item border-black m-1">
           <form method="get" action="{{ url_for('auth.arquivos', turma_id=turma_id, disciplina_id=disciplina_id, nome_disciplina=nome_disciplina) }}">
-            <button class="btn w-100 text-start rounded-0 p-1 link">Arquivos</button>
+            <button class="btn w-100 text-start rounded-2 p-1 link border border-black no-underline">Arquivos</button>
           </form>
         </li>
-        <li class="nav-item border-bottom border-black m-1">
+        <li class="nav-item border-black m-1">
           <form method="get" action="{{ url_for('auth.materias') }}">
-            <button class="btn w-100 text-start rounded-0 p-1 link">Voltar às matérias</button>
+            <button class="btn w-100 text-start rounded-2 p-1 link border border-black no-underline">Voltar às matérias</button>
           </form>
         </li>
       </ul>

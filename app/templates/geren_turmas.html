@@ -31,4 +31,34 @@
     <a class="btn btn-primary" href="{{ url_for('auth.adicionar_turma') }}">Adicionar Turma</a>
     <a class="btn btn-primary" href="{{ url_for('auth.dashboard_coordenacao') }}">Voltar</a>
   </div>
+  <br>
+  <br>
+  <div class="text-center">
+  <form id="formReiniciar" action="#" method="POST">
+    <button type="button" class="btn btn-danger fs-3" id="Reinicar_Ano_Letivo">
+      REINICIAR ANO LETIVO
+    </button>
+  </form>
+</div>
+
+<script>
+  document.getElementById('Reinicar_Ano_Letivo').addEventListener('click', function (e) {
+    e.preventDefault(); // impede envio automático
+
+    Swal.fire({
+      title: 'VOCÊ TEM CERTEZA?',
+      text: 'VOCÊ TEM TOTAL CERTEZA QUE QUER REINICIAR O ANO LETIVO? ESSA AÇÃO NÃO PODE SER REVERTIDA E TODAS AS TAREFAS, POSTAGENS E ARQUIVOS SERÃO APAGADOS.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#6c757d',
+      confirmButtonText: 'Sim, estou ciente e reiniciar',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        document.getElementById('formReiniciar').submit();
+      }
+    });
+  });
+</script>
 {% endblock %}

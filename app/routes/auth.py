@@ -87,6 +87,32 @@ def login():
 
 # Codígo para mandar para o Login
 
+@bp.route('/editar_informacoes_aluno/<int:aluno_id>', methods=['GET', 'POST'])
+def editar_informacoes_aluno(aluno_id):
+    if 'usuario_id' not in session:
+        return redirect(url_for('auth.login'))
+    
+    if session.get('usuario_tipo') not in 'aluno':
+        return redirect(url_for('auth.login'))
+    
+    usuario_id = session.get('usuario_id')
+    cursor = mysql.connection.cursor()
+    cursor.execute("SELECT nome, email FROM usuarios WHERE id = %s", (usuario_id,))
+    dados = cursor.fetchone()
+    usuario = {"nome": dados[0], "email": dados[1], "id": usuario_id}
+
+    if request.method == 'POST':
+        senha = request.form['senha']
+        nova_senha = generate_password_hash(senha)
+        cursor.execute("UPDATE usuarios SET senha = %s WHERE id = %s", (nova_senha, aluno_id))
+        mysql.connection.commit()
+        flash("Senha atualizada com sucesso", "success")
+        cursor.close()
+        return render_template('editar_informacoes_aluno.html', aluno=usuario)
+    cursor.close()
+    return render_template('editar_informacoes_aluno.html', aluno=usuario)
+
+
 @bp.route('/')
 def index():
     # Se já estiver logado, redireciona conforme o tipo
@@ -890,7 +916,8 @@ def dashboard_aluno():
     if session.get('usuario_tipo') not in 'aluno':
         return redirect(url_for('auth.login'))
 
-    return render_template('aluno.html')
+    aluno = session['usuario_id']
+    return render_template('aluno.html', aluno=aluno)
 
 
 @bp.route('/atividade_prof/<int:turma_id>/<int:disciplina_id>/<string:nome_disciplina>')

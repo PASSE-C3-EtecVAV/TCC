@@ -11,22 +11,26 @@
 {% endblock %}
 
 {% block conteudo %}
-  <div class="flex-fill d-flex flex-column justify-content-center p-2 border-end sidebar col-12 col-md-3">
+  <div class="flex-fill d-flex flex-column justify-content-center p-2 border-end sidebar bg-danger col-12 col-md-3">
     <div class="d-flex flex-column">
       <div class="mb-5 border-bottom">
         <h4>Área do Aluno(a)</h4>
       </div>
 
-      <div class="m-1 link">
-        <a class="no-underline d-block border-bottom p-1" href="{{ url_for('auth.materias') }}">Matérias</a>
+      <div class="m-1">
+        <a class="no-underline rounded-2 d-block border border-black link p-1" href="{{ url_for('auth.editar_informacoes_aluno', aluno_id=aluno) }}">Editar As Minhas Informações</a>
       </div>
 
-      <div class="m-1 link">
-        <a class="no-underline d-block border-bottom p-1" href="{{ url_for('auth.redirecionar_todas_atividades') }}">Todas as Tarefas</a>
+      <div class="m-1">
+        <a class="no-underline rounded-2 d-block border border-black link p-1" href="{{ url_for('auth.materias') }}">Matérias</a>
       </div>
 
-      <div class="m-1 link">
-        <a class="no-underline d-block border-bottom p-1" href="{{ url_for('auth.logout') }}">Sair</a>
+      <div class="m-1">
+        <a class="no-underline rounded-2 d-block border border-black link p-1" href="{{ url_for('auth.redirecionar_todas_atividades') }}">Todas as Tarefas</a>
+      </div>
+
+      <div class="m-1">
+        <a class="no-underline rounded-2 d-block border border-black link p-1" href="{{ url_for('auth.logout') }}">Sair</a>
       </div>
     </div>
   </div>

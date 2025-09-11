@@ -59,7 +59,7 @@
 
   <h2>Disciplinas da Turma</h2>
 
-  <div class="border rounded p-3 bg-light mb-4">
+  <div class="border rounded p-3 bg-light m-1">
     {% if disciplinas %}
       <ul class="list-group mb-3">
         {% for disciplina in disciplinas %}
@@ -86,11 +86,11 @@
 
 
       <br>
-      <div class="d-flex flex-row justify-content-center gap-2">
-        <a class="btn btn-primary mt-3" href="{{ url_for('auth.gerenciar_turmas') }}">Voltar</a>
+      <div class="d-flex flex-row justify-content-center m-1">
+        <a class="btn btn-primary m-1" href="{{ url_for('auth.gerenciar_turmas') }}">Voltar</a>
         {% if not alunos %}
           <form id="formExcluirTurma" method="POST" action="{{ url_for('auth.excluir_turma', turma_id=turma_id) }}">
-            <button class="btn btn-danger mt-3" type="submit" id="btnExcluirTurma">Excluir Turma</button>
+            <button class="btn btn-danger m-1" type="submit" id="btnExcluirTurma">Excluir Turma</button>
           </form>
         {% endif %}
       </div>

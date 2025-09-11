@@ -11,22 +11,22 @@
 {% endblock %}
 
 {% block conteudo %}
-  <div class="flex-fill d-flex flex-column justify-content-center p-2 border-end sidebar col-12 col-md-3">
+  <div class="flex-fill d-flex flex-column justify-content-center p-2 border-end sidebar bg-danger col-12 col-md-3">
     <div class="d-flex flex-column">
       <div class="mb-5 border-bottom">
         <h4>Área do Professor(a)</h4>
       </div>
 
-      <div class="m-1 link">
-        <a class="no-underline d-block border-bottom p-1" href="{{ url_for('auth.editar_funcionario', funcionario_id=session.usuario_id, next='dashboard_prof_coorde') }}">Editar Meus Dados</a>
+      <div class="m-1">
+        <a class="no-underline rounded-2 d-block border border-black link p-1" href="{{ url_for('auth.editar_funcionario', funcionario_id=session.usuario_id, next='dashboard_prof_coorde') }}">Editar Meus Dados</a>
       </div>
 
-      <div class="m-1 link">
-        <a class="no-underline d-block border-bottom p-1" href="{{ url_for('auth.turmas') }}">Turmas</a>
+      <div class="m-1">
+        <a class="no-underline rounded-2 d-block border border-black link p-1" href="{{ url_for('auth.turmas') }}">Turmas</a>
       </div>
 
-      <div class="m-1 link">
-        <a class="no-underline d-block border-bottom p-1" href="{{ url_for('auth.logout') }}">Sair</a>
+      <div class="m-1">
+        <a class="no-underline rounded-2 d-block border border-black link p-1" href="{{ url_for('auth.logout') }}">Sair</a>
       </div>
     </div>
   </div>
