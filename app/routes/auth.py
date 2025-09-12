@@ -14,6 +14,7 @@ from urllib.parse import unquote
 bp = Blueprint('auth', __name__)
 
 
+
 def apagar_arquivo(url):
     if not url:
         return
@@ -272,10 +273,87 @@ def ver_turma(turma_id):
         elif acao == 'remover_disciplina':
             disciplina_id = request.form['disciplina_id']
 
-            cursor.execute("DELETE FROM usuarios_disciplinas WHERE disciplina_id = %s", (disciplina_id,))
-            cursor.execute("DELETE FROM turmas_disciplinas WHERE turma_id = %s AND disciplina_id = %s", (turma_id, disciplina_id))
-            cursor.execute("DELETE FROM disciplinas WHERE id = %s", (disciplina_id,))
-            mysql.connection.commit()
+            cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+
+            try:
+                # 1. ENTREGAS
+                cursor.execute("""
+                    SELECT e.id, e.nome_arquivo
+                    FROM entregas e
+                    JOIN atividades a ON e.atividade_id = a.id
+                    WHERE a.disciplina_id = %s
+                """, (disciplina_id,))
+                entregas = cursor.fetchall()
+
+                for entrega in entregas:
+                    if entrega['nome_arquivo']:
+                        try:
+                            apagar_arquivo(entrega['nome_arquivo'])
+                        except Exception:
+                            pass
+                        caminho_local = os.path.join(current_app.static_folder, 'uploads', entrega['nome_arquivo'])
+                        if os.path.exists(caminho_local):
+                            os.remove(caminho_local)
+                    cursor.execute("DELETE FROM entregas WHERE id = %s", (entrega['id'],))
+
+                # 2. ATIVIDADES
+                cursor.execute("SELECT id, arquivo FROM atividades WHERE disciplina_id = %s", (disciplina_id,))
+                atividades = cursor.fetchall()
+
+                for atividade in atividades:
+                    if atividade['arquivo']:
+                        try:
+                            apagar_arquivo(atividade['arquivo'])
+                        except Exception:
+                            pass
+                        caminho_local = os.path.join(current_app.static_folder, 'uploads', atividade['arquivo'])
+                        if os.path.exists(caminho_local):
+                            os.remove(caminho_local)
+                    cursor.execute("DELETE FROM atividades WHERE id = %s", (atividade['id'],))
+
+                # 3. POSTAGENS
+                cursor.execute("SELECT id, arquivo FROM postagens WHERE disciplina_id = %s", (disciplina_id,))
+                postagens = cursor.fetchall()
+
+                for postagem in postagens:
+                    if postagem['arquivo']:
+                        try:
+                            apagar_arquivo(postagem['arquivo'])
+                        except Exception:
+                            pass
+                        caminho_local = os.path.join(current_app.static_folder, 'uploads', postagem['arquivo'])
+                        if os.path.exists(caminho_local):
+                            os.remove(caminho_local)
+                    cursor.execute("DELETE FROM postagens WHERE id = %s", (postagem['id'],))
+
+                # 4. ARQUIVOS DA DISCIPLINA
+                cursor.execute("SELECT id, nome_arquivo FROM arquivos WHERE disciplina_id = %s", (disciplina_id,))
+                arquivos = cursor.fetchall()
+
+                for arquivo in arquivos:
+                    if arquivo['nome_arquivo']:
+                        apagar_arquivo(arquivo['nome_arquivo'])
+                    cursor.execute("DELETE FROM arquivos WHERE id = %s", (arquivo['id'],))
+
+                # 5. DESVINCULAR PROFESSORES E TURMAS
+                cursor.execute("DELETE FROM usuarios_disciplinas WHERE disciplina_id = %s", (disciplina_id,))
+                cursor.execute("DELETE FROM turmas_disciplinas WHERE turma_id = %s AND disciplina_id = %s", (turma_id, disciplina_id))
+
+                # 6. EXCLUIR DISCIPLINA
+                cursor.execute("DELETE FROM disciplinas WHERE id = %s", (disciplina_id,))
+
+                mysql.connection.commit()
+                flash("Disciplina e todos os dados relacionados foram excluídos com sucesso!", "success")
+
+                #7 EXCLUIR DISCIPLINA
+                
+            except Exception as e:
+                mysql.connection.rollback()
+                flash(f"Erro ao excluir disciplina: {str(e)}", "danger")
+
+            finally:
+                cursor.close()
+
 
         # Transferência de todos os alunos
         elif acao == 'transferir_alunos':
@@ -331,22 +409,96 @@ def excluir_turma(turma_id):
     if 'usuario_id' not in session or session.get('usuario_tipo') not in ['coordenacao', 'prof_coorde']:
         return redirect(url_for('auth.login'))
 
-    cursor = mysql.connection.cursor()
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
 
-    # Verifica se tem alunos vinculados
-    cursor.execute("SELECT COUNT(*) FROM usuarios_turmas WHERE turma_id = %s", (turma_id,))
-    total = cursor.fetchone()[0]
+    try:
+        # ========================
+        # 1. ENTREGAS -> excluir arquivos + registros
+        # ========================
+        cursor.execute("""
+            SELECT e.id, e.nome_arquivo 
+            FROM entregas e
+            JOIN atividades a ON e.atividade_id = a.id
+            WHERE a.turma_id = %s
+        """, (turma_id,))
+        entregas = cursor.fetchall()
+        for entrega in entregas:
+            if entrega['nome_arquivo']:
+                apagar_arquivo(entrega['nome_arquivo'])
+            cursor.execute("DELETE FROM entregas WHERE id = %s", (entrega['id'],))
 
-    if total > 0:
+        # ========================
+        # 2. ATIVIDADES -> excluir arquivos + registros
+        # ========================
+        cursor.execute("SELECT id, arquivo FROM atividades WHERE turma_id = %s", (turma_id,))
+        atividades = cursor.fetchall()
+        for atividade in atividades:
+            if atividade['arquivo']:
+                apagar_arquivo(atividade['arquivo'])
+            cursor.execute("DELETE FROM atividades WHERE id = %s", (atividade['id'],))
+
+        # ========================
+        # 3. POSTAGENS -> excluir arquivos + registros
+        # ========================
+        cursor.execute("SELECT id, arquivo FROM postagens WHERE turma_id = %s", (turma_id,))
+        postagens = cursor.fetchall()
+        for postagem in postagens:
+            if postagem['arquivo']:
+                apagar_arquivo(postagem['arquivo'])
+            cursor.execute("DELETE FROM postagens WHERE id = %s", (postagem['id'],))
+
+        # ========================
+        # 4. ARQUIVOS DA TURMA -> excluir arquivos + registros
+        # ========================
+        cursor.execute("SELECT id, nome_arquivo FROM arquivos WHERE turma_id = %s", (turma_id,))
+        arquivos = cursor.fetchall()
+        for arquivo in arquivos:
+            if arquivo['nome_arquivo']:
+                apagar_arquivo(arquivo['nome_arquivo'])
+            cursor.execute("DELETE FROM arquivos WHERE id = %s", (arquivo['id'],))
+
+        # ========================
+        # 5. Pegar disciplinas vinculadas à turma
+        # ========================
+        cursor.execute("SELECT disciplina_id FROM turmas_disciplinas WHERE turma_id = %s", (turma_id,))
+        disciplinas = cursor.fetchall()
+
+        # ========================
+        # 6. Desvincular professores e alunos
+        # ========================
+        cursor.execute("DELETE FROM usuarios_disciplinas WHERE turma_id = %s", (turma_id,))
+        cursor.execute("DELETE FROM usuarios_turmas WHERE turma_id = %s", (turma_id,))
+        cursor.execute("DELETE FROM turmas_disciplinas WHERE turma_id = %s", (turma_id,))
+
+        # ========================
+        # 7. Excluir disciplinas que não estão vinculadas a nenhuma outra turma
+        # ========================
+        for d in disciplinas:
+            disciplina_id = d['disciplina_id']
+            cursor.execute("SELECT COUNT(*) AS total FROM turmas_disciplinas WHERE disciplina_id = %s", (disciplina_id,))
+            total = cursor.fetchone()['total']
+            if total == 0:
+                # Excluir a própria disciplina
+                cursor.execute("DELETE FROM disciplinas WHERE id = %s", (disciplina_id,))
+
+        # ========================
+        # 8. Finalmente excluir a turma
+        # ========================
+        cursor.execute("DELETE FROM turmas WHERE id = %s", (turma_id,))
+
+        mysql.connection.commit()
+        flash("Turma e todos os dados relacionados foram excluídos com sucesso!", "success")
+
+    except Exception as e:
+        mysql.connection.rollback()
+        flash(f"Erro ao excluir turma: {str(e)}", "danger")
+
+    finally:
         cursor.close()
-        return "Erro: A turma possui alunos e não pode ser excluída.", 400
-
-    # Exclui a turma
-    cursor.execute("DELETE FROM turmas WHERE id = %s", (turma_id,))
-    mysql.connection.commit()
-    cursor.close()
 
     return redirect(url_for('auth.gerenciar_turmas'))
+
+
 
 
 
@@ -412,6 +564,88 @@ def editar_aluno(aluno_id):
 
     cursor.close()
     return render_template('editar_aluno.html', aluno=aluno, turma_id=turma_id, turmas=turmas, erro=erro, sucesso=sucesso)
+
+@bp.route('/reiniciar_ano_letivo', methods=['POST'])
+def reiniciar_ano_letivo():
+    if 'usuario_id' not in session or session.get('usuario_tipo') not in ['coordenacao', 'prof_coorde']:
+        return redirect(url_for('auth.login'))
+
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+
+    try:
+        # ========================
+        # 1. ENTREGAS -> apagar arquivos e registros
+        # ========================
+        cursor.execute("SELECT id, nome_arquivo FROM entregas")
+        entregas = cursor.fetchall()
+        for entrega in entregas:
+            if entrega['nome_arquivo']:
+                try:
+                    apagar_arquivo(entrega['nome_arquivo'])
+                except Exception:
+                    pass
+                caminho_local = os.path.join(current_app.static_folder, 'uploads', entrega['nome_arquivo'])
+                if os.path.exists(caminho_local):
+                    os.remove(caminho_local)
+            cursor.execute("DELETE FROM entregas WHERE id = %s", (entrega['id'],))
+
+        # ========================
+        # 2. ATIVIDADES -> apagar arquivos e registros
+        # ========================
+        cursor.execute("SELECT id, arquivo FROM atividades")
+        atividades = cursor.fetchall()
+        for atividade in atividades:
+            if atividade['arquivo']:
+                try:
+                    apagar_arquivo(atividade['arquivo'])
+                except Exception:
+                    pass
+                caminho_local = os.path.join(current_app.static_folder, 'uploads', atividade['arquivo'])
+                if os.path.exists(caminho_local):
+                    os.remove(caminho_local)
+            cursor.execute("DELETE FROM atividades WHERE id = %s", (atividade['id'],))
+
+        # ========================
+        # 3. POSTAGENS -> apagar arquivos e registros
+        # ========================
+        cursor.execute("SELECT id, arquivo FROM postagens")
+        postagens = cursor.fetchall()
+        for postagem in postagens:
+            if postagem['arquivo']:
+                try:
+                    apagar_arquivo(postagem['arquivo'])
+                except Exception:
+                    pass
+                caminho_local = os.path.join(current_app.static_folder, 'uploads', postagem['arquivo'])
+                if os.path.exists(caminho_local):
+                    os.remove(caminho_local)
+            cursor.execute("DELETE FROM postagens WHERE id = %s", (postagem['id'],))
+
+        # ========================
+        # 4. ARQUIVOS -> apagar arquivos e registros
+        # ========================
+        cursor.execute("SELECT id, nome_arquivo FROM arquivos")
+        arquivos = cursor.fetchall()
+        for arquivo in arquivos:
+            if arquivo['nome_arquivo']:
+                try:
+                    apagar_arquivo(arquivo['nome_arquivo'])
+                except Exception:
+                    pass
+                caminho_local = os.path.join(current_app.static_folder, 'uploads', arquivo['nome_arquivo'])
+                if os.path.exists(caminho_local):
+                    os.remove(caminho_local)
+            cursor.execute("DELETE FROM arquivos WHERE id = %s", (arquivo['id'],))
+
+        mysql.connection.commit()
+        flash("Ano letivo reiniciado com sucesso! Todas as postagens, arquivos, atividades e entregas foram apagados.", "success")
+    except Exception as e:
+        mysql.connection.rollback()
+        flash(f"Erro ao reiniciar ano letivo: {str(e)}", "danger")
+    finally:
+        cursor.close()
+
+    return redirect(url_for('auth.gerenciar_turmas'))
 
 
 @bp.route('/excluir_aluno/<int:aluno_id>', methods=['POST'])
