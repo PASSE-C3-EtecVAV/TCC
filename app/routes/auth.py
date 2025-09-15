@@ -1822,10 +1822,6 @@ def editar_postagem(turma_id, disciplina_id, nome_disciplina, post_id):
         turma_id=turma_id,
         disciplina_id=disciplina_id,
         nome_disciplina=nome_disciplina
-<<<<<<< HEAD
-    )
-=======
-    )
 
 @bp.route('/editar_informacoes_aluno', methods=['GET', 'POST'])
 def editar_informacoes_aluno():
@@ -1856,4 +1852,4 @@ def editar_informacoes_aluno():
             return redirect(url_for('auth.editar_informacoes_aluno'))
 
     return render_template('editar_informacoes_aluno.html', aluno=aluno)
->>>>>>> d9fe0299468defc8003d393d35c6c84b6b5cf0b7
+
