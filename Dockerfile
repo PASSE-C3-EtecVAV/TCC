@@ -4,7 +4,10 @@ FROM python:3.11-slim
 # Set work directory
 WORKDIR /app
 
-# Install dependencies
+
+# Instalar dependências do sistema para mysqlclient
+RUN apt-get update && apt-get install -y gcc default-libmysqlclient-dev build-essential
+
 COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
