@@ -6,7 +6,7 @@ WORKDIR /app
 
 
 # Instalar dependências do sistema para mysqlclient
-RUN apt-get update && apt-get install -y gcc libmariadb-dev-compat libmariadb-dev build-essential python3-dev
+RUN apt-get update && apt-get install -y gcc libmariadb-dev-compat libmariadb-dev build-essential python3-dev pkg-config
 
 COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
