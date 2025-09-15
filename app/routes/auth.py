@@ -88,28 +88,28 @@ def login():
 
 # Codígo para mandar para o Login
 
-@bp.route('/editar_informacoes_aluno/<int:aluno_id>', methods=['GET', 'POST'])
-def editar_informacoes_aluno(aluno_id):
-    if 'usuario_id' not in session:
+@bp.route('/editar_informacoes_aluno', methods=['GET', 'POST'])
+def editar_informacoes_aluno():
+    if 'usuario_id' not in session or session.get('usuario_tipo') != 'aluno':
         return redirect(url_for('auth.login'))
-    
-    if session.get('usuario_tipo') not in 'aluno':
-        return redirect(url_for('auth.login'))
-    
-    usuario_id = session.get('usuario_id')
+
+    aluno_id = session['usuario_id']
     cursor = mysql.connection.cursor()
-    cursor.execute("SELECT nome, email FROM usuarios WHERE id = %s", (usuario_id,))
+    cursor.execute("SELECT nome, email FROM usuarios WHERE id = %s", (aluno_id,))
     dados = cursor.fetchone()
-    usuario = {"nome": dados[0], "email": dados[1], "id": usuario_id}
+    usuario = {"nome": dados[0], "email": dados[1], "id": aluno_id}
 
     if request.method == 'POST':
-        senha = request.form['senha']
-        nova_senha = generate_password_hash(senha)
-        cursor.execute("UPDATE usuarios SET senha = %s WHERE id = %s", (nova_senha, aluno_id))
-        mysql.connection.commit()
-        flash("Senha atualizada com sucesso", "success")
-        cursor.close()
-        return render_template('editar_informacoes_aluno.html', aluno=usuario)
+        nova_senha = request.form.get('senha')
+        if not nova_senha:
+            flash("Por favor, insira uma nova senha.", "warning")
+        else:
+            senha_hash = generate_password_hash(nova_senha)
+            cursor.execute("UPDATE usuarios SET senha = %s WHERE id = %s", (senha_hash, aluno_id))
+            mysql.connection.commit()
+            flash("Senha atualizada com sucesso!", "success")
+            cursor.close()
+            return redirect(url_for('auth.editar_informacoes_aluno'))
     cursor.close()
     return render_template('editar_informacoes_aluno.html', aluno=usuario)
 
@@ -1822,4 +1822,38 @@ def editar_postagem(turma_id, disciplina_id, nome_disciplina, post_id):
         turma_id=turma_id,
         disciplina_id=disciplina_id,
         nome_disciplina=nome_disciplina
+<<<<<<< HEAD
     )
+=======
+    )
+
+@bp.route('/editar_informacoes_aluno', methods=['GET', 'POST'])
+def editar_informacoes_aluno():
+    if 'usuario_id' not in session or session.get('usuario_tipo') != 'aluno':
+        return redirect(url_for('auth.login'))
+
+    aluno_id = session['usuario_id']
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+
+    # Buscar informações atuais do aluno
+    cursor.execute("SELECT nome, email FROM usuarios WHERE id = %s", (aluno_id,))
+    aluno = cursor.fetchone()
+
+    if not aluno:
+        flash("Aluno não encontrado.", "danger")
+        return redirect(url_for('auth.dashboard_aluno'))
+
+    if request.method == 'POST':
+        nova_senha = request.form.get('senha')
+
+        if not nova_senha:
+            flash("Por favor, insira uma nova senha.", "warning")
+        else:
+            senha_hash = generate_password_hash(nova_senha)
+            cursor.execute("UPDATE usuarios SET senha = %s WHERE id = %s", (senha_hash, aluno_id))
+            mysql.connection.commit()
+            flash("Senha atualizada com sucesso!", "success")
+            return redirect(url_for('auth.editar_informacoes_aluno'))
+
+    return render_template('editar_informacoes_aluno.html', aluno=aluno)
+>>>>>>> d9fe0299468defc8003d393d35c6c84b6b5cf0b7

@@ -1,113 +1,117 @@
 # 📚 P.A.S.S.E – Plataforma de Apoio ao Sistema de Sala de Ensino
 
-![Status](https://img.shields.io/badge/status-active-success.svg)
-![License](https://img.shields.io/badge/license-MIT-blue.svg)
-![Python](https://img.shields.io/badge/Python-3.9%2B-blue.svg)
-![Flask](https://img.shields.io/badge/Flask-Framework-red.svg)
-![MySQL](https://img.shields.io/badge/MySQL-Database-orange.svg)
-
-Uma alternativa gratuita, escalável e acessível ao Microsoft Teams para instituições de ensino público, desenvolvida para otimizar a comunicação e o compartilhamento de arquivos entre professores e alunos.
+[![Status do Projeto](https://img.shields.io/badge/status-em%20desenvolvimento-yellow)](https://github.com/PASSE-C3-EtecVAV/TCC)
+![Python](https://img.shields.io/badge/python-3.9%2B-blue.svg)
+![Flask](https://img.shields.io/badge/framework-Flask-orange.svg)
+![MySQL](https://img.shields.io/badge/banco-MySQL-lightgrey.svg)
+![Licença](https://img.shields.io/badge/licença-GPL--3.0-green.svg)
 
 ---
 
-## 🧩 Sobre o Projeto
+## 📖 Sobre o Projeto
 
-O **P.A.S.S.E** foi desenvolvido como parte do **Trabalho de Conclusão de Curso (TCC)** do curso **Técnico em Desenvolvimento de Sistemas** da **ETEC Vasco Antonio Venchiarutti (Centro Paula Souza)**.  
+O **P.A.S.S.E** foi desenvolvido como Trabalho de Conclusão de Curso (TCC) no curso Técnico em Desenvolvimento de Sistemas da **ETEC Vasco Antonio Venchiarutti (Centro Paula Souza)**.
 
-A plataforma foi projetada para enfrentar as dificuldades causadas pelos cortes orçamentários na educação pública no Brasil, que impactaram diretamente o uso de ferramentas pagas como o Microsoft Teams. Nosso objetivo é oferecer uma **solução gratuita, funcional e de fácil manutenção**, capaz de atender às necessidades de comunicação e organização pedagógica de escolas públicas.
+É uma alternativa **gratuita, escalável e acessível** ao Microsoft Teams, pensada para otimizar a comunicação, o compartilhamento de arquivos e a organização acadêmica em instituições públicas de ensino.
 
----
-
-## ✨ Principais Benefícios
-
-- **Baixo custo:** solução gratuita que elimina a necessidade de licenças caras.
-- **Acessibilidade:** interface intuitiva e responsiva, acessível de qualquer dispositivo com internet.
-- **Escalabilidade:** uso de computação em nuvem para maior capacidade de armazenamento.
-- **Foco educacional:** projetado especificamente para ambientes escolares, com recursos de turmas, disciplinas, postagens e atividades.
+O projeto faz uso da AWS (Amazon Web Services) na camada Free Tier, permitindo que sua execução e armazenamento sejam gratuitos dentro dos limites do plano educacional e promocional oferecido pela plataforma.
 
 ---
 
-## 🔐 Funcionalidades
+## ✨ Benefícios
 
-- **Sistema de Login:** acesso diferenciado para professores, coordenadores e alunos.
-- **Gerenciamento de Turmas e Disciplinas:** cadastro e vinculação de usuários.
-- **Postagens:** criação, edição e exclusão de postagens com anexos para comunicação interna.
-- **Atividades:** envio, entrega e gerenciamento de atividades com prazos e feedback dos professores.
-- **Controle de Entregas:** professores podem visualizar, anotar e gerenciar as atividades entregues.
-- **Gerenciamento de Arquivos:** upload e download organizado por turma e disciplina.
-- **Painel Administrativo:** para gestão de usuários, disciplinas e turmas.
+- **Baixo custo** → baseado em tecnologias gratuitas ou open source  
+- **Acessibilidade** → interface responsiva em qualquer dispositivo  
+- **Escalabilidade** → suporte para nuvem e armazenamento distribuído  
+- **Foco educacional** → funcionalidades ajustadas à realidade escolar  
+
+---
+
+## 🔍 Funcionalidades
+
+- Sistema de **login diferenciado** para alunos, professores e coordenadores  
+- **Gerenciamento de turmas e disciplinas** com vínculo entre usuários  
+- **Postagens com anexos** (documentos, imagens, PDFs)  
+- **Atividades** com envio, prazos, feedback e controle de entregas  
+- **Gerenciamento de arquivos** por disciplina/turma  
+- **Painel administrativo** para coordenadores e gestores  
 
 ---
 
 ## ⚙️ Tecnologias Utilizadas
 
-- **Back-end:** [Flask](https://flask.palletsprojects.com/) (Python)
-- **Banco de Dados:** [MySQL](https://www.mysql.com/) (com suporte para nuvem)
-- **Front-end:** HTML5, CSS3, JavaScript, [Bootstrap](https://getbootstrap.com/)
-- **Armazenamento:** Computação em nuvem para maior disponibilidade e escalabilidade
-- **Controle de Versão:** [Git](https://git-scm.com/) e [GitHub](https://github.com)
+| Componente        | Tecnologia                     |
+|-------------------|--------------------------------|
+| **Back-end**      | Python (Flask)                 |
+| **Banco de Dados**| MySQL                          |
+| **Front-end**     | HTML5, CSS3, JavaScript, Bootstrap |
+| **Armazenamento** | Suporte em nuvem               |
+| **Controle de Versão** | Git + GitHub              |
 
 ---
 
-## 🧱 Estrutura do Projeto
+## 📁 Estrutura do Projeto
 
 ```
 /app
-│   ├── static/        # Arquivos estáticos (CSS, JS, imagens, uploads)
-│   ├── templates/     # Páginas HTML (Flask/Jinja2)
-│   ├── routes/        # Rotas Flask e controladores
-│   ├── models/        # Modelos e conexões com banco de dados
-│   └── app.py         # Arquivo principal do Flask
+├── static/          # Arquivos estáticos (CSS, JS, imagens, uploads)
+├── templates/       # Páginas HTML (Flask/Jinja2)
+├── routes/          # Rotas e controladores
+├── models/          # Modelos e conexão com banco de dados
+└── app.py           # Arquivo principal Flask
 /config
-│   └── db_config.py   # Configurações de conexão com MySQL
-README.md
+└── db_config.py     # Configuração do MySQL
 requirements.txt
+README.md
 ```
 
 ---
 
-## 🚀 Instalação e Execução
+## 🚀 Como Executar
 
-### **Pré-requisitos**
+### 🔧 Pré-requisitos
+- Python 3.x  
+- MySQL  
+- Git  
 
-- Python 3.x
-- MySQL Server
-- Git
+### 📌 Passos
 
-### **Passos**
-
-1. Clone o repositório:
+1. Clone o repositório  
    ```bash
-   git clone https://github.com/seuusuario/passe.git
-   cd passe
+   git clone https://github.com/PASSE-C3-EtecVAV/TCC.git
+   cd TCC
    ```
 
-2. Crie e ative um ambiente virtual:
+2. Crie e ative o ambiente virtual  
    ```bash
    python -m venv venv
    source venv/bin/activate   # Linux/Mac
    venv\Scripts\activate      # Windows
    ```
 
-3. Instale as dependências:
+3. Instale as dependências  
    ```bash
    pip install -r requirements.txt
    ```
 
-4. Configure o banco de dados:
-   - Crie o banco MySQL e ajuste o arquivo `config/db_config.py` com suas credenciais.
-   - Importe o script SQL disponível em `/db/tcc.sql`.
+4. Configure o banco de dados  
+   - Crie o banco no MySQL  
+   - Ajuste `config/db_config.py` com suas credenciais  
+   - Importe o script SQL (se disponível)  
 
-5. Execute o projeto:
+5. Execute a aplicação  
    ```bash
    flask run
    ```
 
-6. Acesse o sistema em: (Achar um locla para hospedagem)
+6. Acesse no navegador:  
+   ```
+   http://localhost:5000
+   ```
 
 ---
 
-## 👨‍🏫 Desenvolvedores
+## 👥 Desenvolvedores
 
 - Abner Peixoto Santana Brochado  
 - Bruno Honorato Passos  
@@ -116,9 +120,20 @@ requirements.txt
 
 ---
 
-## 📄 Licença
+## 📝 Licença
 
-Este projeto está sob a licença [MIT](LICENSE).
+Este projeto está sob a licença **GPL-3.0**.  
+Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
+
+---
+
+## 🚀 Melhorias Futuras
+
+- Testes unitários e de integração  
+- Validação de uploads e segurança contra SQL injection  
+- Integração com serviços de nuvem para deploy  
+- Documentação da API (se aplicável)  
+- Interface mais amigável para dispositivos móveis
 
 ---
 
