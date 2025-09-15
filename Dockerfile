@@ -6,7 +6,7 @@ WORKDIR /app
 
 
 # Instalar dependências do sistema para mysqlclient
-RUN apt-get update && apt-get install -y gcc default-libmysqlclient-dev build-essential
+RUN apt-get update && apt-get install -y gcc libmysqlclient-dev build-essential python3-dev
 
 COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
