@@ -22,4 +22,4 @@ ENV FLASK_ENV=production
 EXPOSE 8080
 
 # Run the Flask app
-CMD ["python", "run.py"]
+CMD ["python", "-m", "waitress", "--port=8080", "run:app"]
