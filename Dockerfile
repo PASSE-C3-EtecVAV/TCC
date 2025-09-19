@@ -6,8 +6,8 @@ ENV PYTHONUNBUFFERED 1
 # Instalar dependências do sistema
 RUN apt-get update && apt-get install -y \
     gcc \
-    libmysqlclient-dev \
-    default-libmysqlclient-dev \
+    libmariadb-dev \
+    libmariadb-dev-compat \
     && apt-get clean
 
 WORKDIR /app
