@@ -136,6 +136,6 @@ def init_db(mysql):
         pass
     else:
         cursor.execute(""" INSERT INTO `usuarios` (`id`, `nome`, `email`, `senha`, `tipo`) VALUES
-                                                                    (1, 'Adm', 'adm@adm.com', 'scrypt:32768:8:1$4376UZA9NxEZjdDz$ae8ac6e1eb9492c907a4773e404a736a132caaac18bbc9aaf1e073c7d08a8f8d938a52bd93e89d3c03b34ca5d557d8364f4680f2e64693610a90d9863a89fa3a', 'professor') """)
+                                                                    (1, 'Adm', 'adm@adm.com', 'scrypt:32768:8:1$4376UZA9NxEZjdDz$ae8ac6e1eb9492c907a4773e404a736a132caaac18bbc9aaf1e073c7d08a8f8d938a52bd93e89d3c03b34ca5d557d8364f4680f2e64693610a90d9863a89fa3a', 'prof_coorde') """)
     mysql.connection.commit()
     cursor.close()
