@@ -3,6 +3,13 @@ FROM python:3.11-slim
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
+# Instalar dependências do sistema
+RUN apt-get update && apt-get install -y \
+    gcc \
+    libmysqlclient-dev \
+    default-libmysqlclient-dev \
+    && apt-get clean
+
 WORKDIR /app
 
 COPY requirements.txt .
