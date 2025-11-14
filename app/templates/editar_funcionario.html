@@ -24,26 +24,11 @@ ed_funcionario
 
     <p><strong>Email:</strong> {{ funcionario.email }}</p>
 
-    <form method="POST" action="{{ url_for('auth.editar_funcionario', funcionario_id=funcionario.id) }}">
+    <form method="POST" action="{{ url_for('auth.editar_funcionario', funcionario_id=funcionario.id) }}" id="principal">
         <div class="form-floating m-2">
             <input class="form-control" type="text" name="nome" id="nome" value="{{ funcionario.nome }}" placeholder="Nome" required>
             <label class="form-label" for="nome">Nome</label>
         </div>
-        {% if funcionario.id == session['usuario_id'] %}
-            <div class="m-2">
-                <h3>Alterar Senha</h3>
-                <form method="POST" action="{{ url_for('auth.editar_funcionario', funcionario_id=funcionario.id) }}">
-                    <div class="form-floating m-1">
-                        <input class="form-control m-1" type="password" name="nova_senha" id="nova_senha" placeholder="Nova Senha" required>
-                        <label class="form-label" for="nova_senha">Nova Senha</label>
-                    </div>
-                    <input class="form-control" type="hidden" name="acao" value="trocar_senha">
-                    <button class="btn btn-primary m-1" type="submit">Salvar Nova Senha</button>
-                </form>
-            </div>
-        {% endif %}
-
-
         {% if session['usuario_tipo'] == 'professor' %}
         {% else %}
         <div class="m-2">
@@ -75,15 +60,28 @@ ed_funcionario
                         </a>
                     </div>
                 {% endif %}
-        {% endif %}
-        <div class="d-flex flex-column align-items-center justify-content-center">
-        {% if funcionario.id == session['usuario_id'] %}
-        {% else %}
-        <button class="btn btn-primary m-1" type="submit" name="acao" value="redefinir">Redefinir Senha</button>
-        {% endif %}
-        <button class="btn btn-primary m-1" type="submit" name="acao" value="salvar">Salvar Alterações</button>
+        {% endif %}>
         
     </form>
+    {% if funcionario.id == session['usuario_id'] %}
+            <div class="m-2">
+                <h3>Alterar Senha</h3>
+                <form method="POST" action="{{ url_for('auth.editar_funcionario', funcionario_id=funcionario.id) }}">
+                    <div class="form-floating m-1">
+                        <input class="form-control m-1" type="password" name="nova_senha" id="nova_senha" placeholder="Nova Senha" required>
+                        <label class="form-label" for="nova_senha">Nova Senha</label>
+                    </div>
+                    <input class="form-control" type="hidden" name="acao" value="trocar_senha">
+                    <button class="btn btn-primary m-1" type="submit">Salvar Nova Senha</button>
+                </form>
+            </div>
+        {% endif %}
+
+    {% if funcionario.id == session['usuario_id'] %}
+        {% else %}
+        <button class="btn btn-primary m-1" type="submit" name="acao" value="redefinir" form="principal">Redefinir Senha</button>
+        {% endif %}
+        <button class="btn btn-primary m-1" type="submit" name="acao" value="salvar" form="principal">Salvar Alterações</button>
 
     {% if funcionario.id != session['usuario_id'] %}
         <button class="btn btn-danger m-1" onclick="confirmarExclusaoFuncionario({{ funcionario.id }})">
