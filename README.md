@@ -50,23 +50,6 @@ O projeto faz uso da AWS (Amazon Web Services) na camada Free Tier, permitindo q
 
 ---
 
-## 📁 Estrutura do Projeto
-
-```
-/app
-├── static/          # Arquivos estáticos (CSS, JS, imagens, uploads)
-├── templates/       # Páginas HTML (Flask/Jinja2)
-├── routes/          # Rotas e controladores
-├── models/          # Modelos e conexão com banco de dados
-└── app.py           # Arquivo principal Flask
-/config
-└── db_config.py     # Configuração do MySQL
-requirements.txt
-README.md
-```
-
----
-
 ## 🚀 Como Executar
 
 ### 🔧 Pré-requisitos
@@ -94,21 +77,15 @@ README.md
    pip install -r requirements.txt
    ```
 
-4. Configure o banco de dados  
-   - Crie o banco no MySQL  
-   - Ajuste `config/db_config.py` com suas credenciais  
-   - Importe o script SQL (se disponível)  
+4. Configure o banco de dados
+   - Crie o Banco de Dados com nome "tcc"
+   - O Banco de Dados já é configurado pelo proprio sistema!
 
-5. Execute a aplicação  
+6. Execute a aplicação  
    ```bash
-   flask run
+   flask run.py
    ```
-
-6. Acesse no navegador:  
-   ```
-   http://localhost:5000
-   ```
-
+   E acesse o Link que aparece no Terminal
 ---
 
 ## 👥 Desenvolvedores
@@ -124,16 +101,6 @@ README.md
 
 Este projeto está sob a licença **GPL-3.0**.  
 Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
-
----
-
-## 🚀 Melhorias Futuras
-
-- Testes unitários e de integração  
-- Validação de uploads e segurança contra SQL injection  
-- Integração com serviços de nuvem para deploy  
-- Documentação da API (se aplicável)  
-- Interface mais amigável para dispositivos móveis
 
 ---
 
